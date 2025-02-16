@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{97A59294-36A7-4103-A8D7-31541BED02CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{988CAF36-F921-407C-8E68-6FB437EF136B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowly.Core.Application", "CashFlowly.Core.Application\CashFlowly.Core.Application.csproj", "{44C12C6D-47F9-4EFA-984E-99C7C8A77EA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowly.Core.Domain", "CashFlowly.Core.Domain\CashFlowly.Core.Domain.csproj", "{55C71E6C-1085-45D4-A8B2-0D55D12E6A1D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{EC42C93A-1EF8-4C43-B81B-9774A8CFC095}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowly.Infrastructure.Persistence", "CashFlowly.Infrastructure.Persistence\CashFlowly.Infrastructure.Persistence.csproj", "{6A31F4FD-749B-460E-8605-955B63967DE8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{216F8CFA-2601-4286-92A3-FEF5F1545882}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApp", "WebApp", "{A25402CD-3AC4-4754-AF67-8E977AD7AC2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowly", "CashFlowly\CashFlowly.csproj", "{007EAFE1-70A3-4625-A231-72273838BBAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44C12C6D-47F9-4EFA-984E-99C7C8A77EA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44C12C6D-47F9-4EFA-984E-99C7C8A77EA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44C12C6D-47F9-4EFA-984E-99C7C8A77EA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44C12C6D-47F9-4EFA-984E-99C7C8A77EA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55C71E6C-1085-45D4-A8B2-0D55D12E6A1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55C71E6C-1085-45D4-A8B2-0D55D12E6A1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55C71E6C-1085-45D4-A8B2-0D55D12E6A1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55C71E6C-1085-45D4-A8B2-0D55D12E6A1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A31F4FD-749B-460E-8605-955B63967DE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A31F4FD-749B-460E-8605-955B63967DE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A31F4FD-749B-460E-8605-955B63967DE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A31F4FD-749B-460E-8605-955B63967DE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{007EAFE1-70A3-4625-A231-72273838BBAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{007EAFE1-70A3-4625-A231-72273838BBAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{007EAFE1-70A3-4625-A231-72273838BBAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{007EAFE1-70A3-4625-A231-72273838BBAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{988CAF36-F921-407C-8E68-6FB437EF136B} = {97A59294-36A7-4103-A8D7-31541BED02CF}
+		{44C12C6D-47F9-4EFA-984E-99C7C8A77EA3} = {988CAF36-F921-407C-8E68-6FB437EF136B}
+		{55C71E6C-1085-45D4-A8B2-0D55D12E6A1D} = {988CAF36-F921-407C-8E68-6FB437EF136B}
+		{EC42C93A-1EF8-4C43-B81B-9774A8CFC095} = {97A59294-36A7-4103-A8D7-31541BED02CF}
+		{6A31F4FD-749B-460E-8605-955B63967DE8} = {EC42C93A-1EF8-4C43-B81B-9774A8CFC095}
+		{216F8CFA-2601-4286-92A3-FEF5F1545882} = {97A59294-36A7-4103-A8D7-31541BED02CF}
+		{A25402CD-3AC4-4754-AF67-8E977AD7AC2E} = {216F8CFA-2601-4286-92A3-FEF5F1545882}
+		{007EAFE1-70A3-4625-A231-72273838BBAE} = {A25402CD-3AC4-4754-AF67-8E977AD7AC2E}
+	EndGlobalSection
+EndGlobal
