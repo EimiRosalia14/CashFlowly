@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "CashFlowly.Core.Application/1.0.0": {
+        "dependencies": {
+          "CashFlowly.Core.Domain": "1.0.0"
+        },
+        "runtime": {
+          "CashFlowly.Core.Application.dll": {}
+        }
+      },
+      "CashFlowly.Core.Domain/1.0.0": {
+        "runtime": {
+          "CashFlowly.Core.Domain.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CashFlowly.Core.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CashFlowly.Core.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

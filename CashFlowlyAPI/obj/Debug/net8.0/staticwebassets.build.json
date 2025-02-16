@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "VRW9hE8W5lQ6Gy/pgaNLh7A9RztIBauZavfGyZ+CNYs=",
+  "Source": "CashFlowlyAPI",
+  "BasePath": "_content/CashFlowlyAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

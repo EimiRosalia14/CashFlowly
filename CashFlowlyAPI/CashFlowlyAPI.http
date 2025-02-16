@@ -1,0 +1,6 @@
+@CashFlowlyAPI_HostAddress = http://localhost:5115
+
+GET {{CashFlowlyAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
