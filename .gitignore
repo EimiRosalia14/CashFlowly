@@ -1,0 +1,10 @@
+.vs/
+bin/
+obj/
+*.pdb
+*.cache
+*.dll
+*.exe
+*.db
+*.log
+src/
