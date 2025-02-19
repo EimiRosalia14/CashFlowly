@@ -3,13 +3,13 @@ using System.Security.Claims;
 using System.Text;
 using CashFlowly.Core.Application.DTOs.Usuario;
 using CashFlowly.Core.Application.Interfaces.Services;
-using CashFlowly.Infrastructure.Persistence.Contexts;
 using CashFlowly.Core.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using CashFlowly.Infrastructure.Persistence.Repositories;
+using CashFlowly.Infrastructure.Persistence.Contexts;
 
 namespace CashFlowly.Infrastructure.Persistence.Services
 {
@@ -60,6 +60,26 @@ namespace CashFlowly.Infrastructure.Persistence.Services
                 }
             }
         }
+
+        public async Task<string> LoginAsync(LoginDto loginDto)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorEmailAsync(loginDto.Email);
+
+            if (usuario == null)
+            {
+                throw new UnauthorizedAccessException("Email o contraseña incorrectos.");
+            }
+
+            bool passwordValida = BCrypt.Net.BCrypt.Verify(loginDto.Password, usuario.PasswordHash);
+            if (!passwordValida)
+            {
+                throw new UnauthorizedAccessException("Email o contraseña incorrectos.");
+            }
+
+            var token = GenerarToken(usuario);
+            return token;
+        }
+
 
         private string GenerarToken(Usuario usuario)
         {

@@ -1,11 +1,12 @@
 using CashFlowly.Core.Application.Interfaces.Services;
 using CashFlowly.Infrastructure.Persistence.Services;
-using CashFlowly.Infrastructure.Persistence.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CashFlowly.Infrastructure.Persistence.Repositories;
+using CashFlowly.Infrastructure.Persistence;
+using CashFlowly.Infrastructure.Persistence.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 

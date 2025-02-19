@@ -28,5 +28,25 @@ namespace CashFlowly.API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var token = await _authService.LoginAsync(loginDto);
+                return Ok(new { Token = token });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Ocurrió un error en el servidor.", Error = ex.Message });
+            }
+        }
     }
 }
