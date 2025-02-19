@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace CashFlowly.Core.Domain.Entities
 {
@@ -18,6 +19,14 @@ namespace CashFlowly.Core.Domain.Entities
 
         // Propiedades necesarias para la verificación de cuenta
         public bool Confirmado { get; set; } = false;
-        public string? TokenVerificacion { get; set; } 
+        public string? TokenVerificacion { get; set; }
+
+        // Nuevo: Saldo Disponible para gastar
+        public decimal SaldoDisponible { get; set; }
+
+        // Relaciones
+        public ICollection<Transaccion> Transacciones { get; set; }
+        public ICollection<MetaFinanciera> MetasFinancieras { get; set; }
+        public ICollection<Alerta> Alertas { get; set; }
     }
 }
