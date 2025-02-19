@@ -11,5 +11,7 @@ namespace CashFlowly.Core.Application.Interfaces.Services
     {
         Task<string> RegistrarUsuarioAsync(UsuarioRegistroDto usuarioDto);
         Task<string> LoginAsync(LoginDto loginDto);
+
+        Task<bool> ConfirmarCuentaAsync(string token);
     }
 }
