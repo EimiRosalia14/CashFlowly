@@ -28,5 +28,11 @@ namespace CashFlowly.Infrastructure.Persistence.Repositories
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
         }
+        //hazme el metodo para actualizar usuarios
+        public async Task ActualizarAsync(Usuario usuario)
+        {
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+        }
     }
 }

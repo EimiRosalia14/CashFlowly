@@ -18,12 +18,14 @@ namespace CashFlowly.Infrastructure.Persistence.Services
         private readonly UsuarioRepository _usuarioRepository;
         private readonly IConfiguration _configuration;
         private readonly CashFlowlyDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public AuthService(UsuarioRepository usuarioRepository, IConfiguration configuration, CashFlowlyDbContext context)
+        public AuthService(UsuarioRepository usuarioRepository, IConfiguration configuration, CashFlowlyDbContext context, IEmailService emailService)
         {
             _usuarioRepository = usuarioRepository;
             _configuration = configuration;
             _context = context;
+            _emailService = emailService;
         }
 
         public async Task<string> RegistrarUsuarioAsync(UsuarioRegistroDto usuarioDto)
@@ -65,20 +67,42 @@ namespace CashFlowly.Infrastructure.Persistence.Services
         {
             var usuario = await _usuarioRepository.ObtenerPorEmailAsync(loginDto.Email);
 
-            if (usuario == null)
+            if (usuario == null || usuario.Bloqueado)
             {
-                throw new UnauthorizedAccessException("Email o contraseña incorrectos.");
+                throw new UnauthorizedAccessException("Usuario o contraseña incorrectos.");
             }
 
             bool passwordValida = BCrypt.Net.BCrypt.Verify(loginDto.Password, usuario.PasswordHash);
+
             if (!passwordValida)
             {
-                throw new UnauthorizedAccessException("Email o contraseña incorrectos.");
+                usuario.IntentosFallidos++;
+
+                // 🚨 Bloqueo si excede intentos fallidos permitidos
+                if (usuario.IntentosFallidos >= 5)
+                {
+                    usuario.Bloqueado = true;
+                    await _usuarioRepository.ActualizarAsync(usuario);
+
+                    // 📧 Enviar correo de alerta por bloqueo
+                    await _emailService.EnviarCorreoAsync(usuario.Email, "Cuenta bloqueada",
+                        "Tu cuenta ha sido bloqueada por múltiples intentos fallidos. Si no fuiste tú, contacta soporte.");
+
+                    throw new UnauthorizedAccessException("Cuenta bloqueada por demasiados intentos fallidos.");
+                }
+
+                await _usuarioRepository.ActualizarAsync(usuario);
+                throw new UnauthorizedAccessException("Usuario o contraseña incorrectos.");
             }
+
+            // ✅ Si la contraseña es correcta, restablecer intentos fallidos
+            usuario.IntentosFallidos = 0;
+            await _usuarioRepository.ActualizarAsync(usuario);
 
             var token = GenerarToken(usuario);
             return token;
         }
+
 
 
         private string GenerarToken(Usuario usuario)
