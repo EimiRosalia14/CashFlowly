@@ -28,5 +28,15 @@ namespace CashFlowly.Infrastructure.Persistence.Repositories
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
         }
+        public async Task ActualizarAsync(Usuario usuario)
+        {
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<Usuario> ObtenerPorTokenAsync(string token)
+        {
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.TokenVerificacion == token);
+        }
+
     }
 }

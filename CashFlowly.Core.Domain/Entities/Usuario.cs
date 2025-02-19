@@ -13,5 +13,11 @@ namespace CashFlowly.Core.Domain.Entities
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public DateTime FechaRegistro { get; set; }
+        public int IntentosFallidos { get; set; } // Contador de intentos fallidos de inicio de sesión
+        public bool Bloqueado { get; set; } // Estado de la cuenta (bloqueada o no)
+
+        // Propiedades necesarias para la verificación de cuenta
+        public bool Confirmado { get; set; } = false;
+        public string? TokenVerificacion { get; set; } 
     }
 }

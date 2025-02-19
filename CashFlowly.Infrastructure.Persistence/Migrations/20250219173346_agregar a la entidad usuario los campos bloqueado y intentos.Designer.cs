@@ -4,6 +4,7 @@ using CashFlowly.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CashFlowly.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CashFlowlyDbContext))]
-    partial class CashFlowlyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250219173346_agregar a la entidad usuario los campos bloqueado y intentos")]
+    partial class agregaralaentidadusuarioloscamposbloqueadoyintentos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,9 +36,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.Property<bool>("Bloqueado")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Confirmado")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -52,9 +52,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TokenVerificacion")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
