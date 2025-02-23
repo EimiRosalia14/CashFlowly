@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using CashFlowly.Infrastructure.Persistence.Repositories;
 using CashFlowly.Infrastructure.Persistence.Contexts;
+using System.Web;
+using System.Text.RegularExpressions;
 
 namespace CashFlowly.Infrastructure.Persistence.Services
 {
@@ -40,20 +42,33 @@ namespace CashFlowly.Infrastructure.Persistence.Services
                         throw new Exception("El correo ya está en uso.");
                     }
 
+                    if (!EsContraseñaValida(usuarioDto.Password))
+                    {
+                        throw new Exception("La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.");
+                    }
+
                     var usuario = new Usuario
                     {
                         Nombre = usuarioDto.Nombre,
                         Email = usuarioDto.Email,
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword(usuarioDto.Password),
-                        FechaRegistro = DateTime.UtcNow
+                        FechaRegistro = DateTime.UtcNow,
+                        Confirmado = false,
+                        TokenVerificacion = Guid.NewGuid().ToString()
                     };
 
                     await _usuarioRepository.AgregarAsync(usuario);
 
-                    var token = GenerarToken(usuario);
+                    // Enviar el correo ANTES de confirmar la transacción
+                    var backendUrl = _configuration["AppSettings:BackendUrl"];
+                    var urlVerificacion = $"{backendUrl}/api/usuarios/confirmar?token={HttpUtility.UrlEncode(usuario.TokenVerificacion)}";
+                    var mensaje = $"Hola {usuario.Nombre},\n\nGracias por registrarte en CashFlowly.\n\nPor favor verifica tu cuenta haciendo clic en el siguiente enlace: {urlVerificacion}\n\nSi no solicitaste esta cuenta, ignora este mensaje.\n\nSaludos,\nEl equipo de CashFlowly.";
+                    await _emailService.EnviarCorreoAsync(usuario.Email, "Verificación de Cuenta", mensaje);
 
+                    // Ahora sí confirmamos la transacción
                     await transaction.CommitAsync();
-                    return token;
+
+                    return "Usuario registrado exitosamente. Por favor revise su correo electrónico para activar la cuenta.";
                 }
                 catch (Exception)
                 {
@@ -63,13 +78,37 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             }
         }
 
+
+        public async Task<bool> ConfirmarCuentaAsync(string token)
+        {
+            try
+            {
+                var usuario = await _usuarioRepository.ObtenerPorTokenAsync(token);
+                if (usuario == null)
+                {
+                    return false;
+                }
+
+                usuario.Confirmado = true;
+                usuario.TokenVerificacion = null;
+
+                await _usuarioRepository.ActualizarAsync(usuario);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al confirmar cuenta: {ex.InnerException?.Message ?? ex.Message}");
+            }
+        }
+
+
         public async Task<string> LoginAsync(LoginDto loginDto)
         {
             var usuario = await _usuarioRepository.ObtenerPorEmailAsync(loginDto.Email);
 
-            if (usuario == null || usuario.Bloqueado)
+            if (usuario == null || usuario.Bloqueado || !usuario.Confirmado)
             {
-                throw new UnauthorizedAccessException("Usuario o contraseña incorrectos.");
+                throw new UnauthorizedAccessException("Usuario no autorizado o cuenta no verificada.");
             }
 
             bool passwordValida = BCrypt.Net.BCrypt.Verify(loginDto.Password, usuario.PasswordHash);
@@ -78,13 +117,16 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             {
                 usuario.IntentosFallidos++;
 
+<<<<<<< HEAD
                 // 🚨 Bloqueo si excede intentos fallidos permitidos
                 if (usuario.IntentosFallidos >= 10)
+=======
+                if (usuario.IntentosFallidos >= 5)
+>>>>>>> 17dbf90331e1aa3658be59e37c2a60758441f42d
                 {
                     usuario.Bloqueado = true;
                     await _usuarioRepository.ActualizarAsync(usuario);
 
-                    // 📧 Enviar correo de alerta por bloqueo
                     await _emailService.EnviarCorreoAsync(usuario.Email, "Cuenta bloqueada",
                         "Tu cuenta ha sido bloqueada por múltiples intentos fallidos. Si no fuiste tú, contacta soporte.");
 
@@ -95,7 +137,6 @@ namespace CashFlowly.Infrastructure.Persistence.Services
                 throw new UnauthorizedAccessException("Usuario o contraseña incorrectos.");
             }
 
-            // ✅ Si la contraseña es correcta, restablecer intentos fallidos
             usuario.IntentosFallidos = 0;
             await _usuarioRepository.ActualizarAsync(usuario);
 
@@ -140,8 +181,6 @@ namespace CashFlowly.Infrastructure.Persistence.Services
         #endregion
 
 
-
-
         private string GenerarToken(Usuario usuario)
         {
             var claims = new[]
@@ -164,6 +203,11 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private bool EsContraseñaValida(string password)
+        {
+            return Regex.IsMatch(password, @"^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$");
         }
     }
 }
