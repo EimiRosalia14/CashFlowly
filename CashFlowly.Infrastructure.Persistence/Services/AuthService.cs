@@ -117,12 +117,8 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             {
                 usuario.IntentosFallidos++;
 
-<<<<<<< HEAD
                 // 🚨 Bloqueo si excede intentos fallidos permitidos
                 if (usuario.IntentosFallidos >= 10)
-=======
-                if (usuario.IntentosFallidos >= 5)
->>>>>>> 17dbf90331e1aa3658be59e37c2a60758441f42d
                 {
                     usuario.Bloqueado = true;
                     await _usuarioRepository.ActualizarAsync(usuario);
