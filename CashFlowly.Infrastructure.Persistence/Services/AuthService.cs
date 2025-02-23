@@ -79,7 +79,7 @@ namespace CashFlowly.Infrastructure.Persistence.Services
                 usuario.IntentosFallidos++;
 
                 // 🚨 Bloqueo si excede intentos fallidos permitidos
-                if (usuario.IntentosFallidos >= 5)
+                if (usuario.IntentosFallidos >= 10)
                 {
                     usuario.Bloqueado = true;
                     await _usuarioRepository.ActualizarAsync(usuario);
@@ -102,6 +102,43 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             var token = GenerarToken(usuario);
             return token;
         }
+        #region no implementado(desbloquear usuario)
+
+        //public async Task<bool> DesbloquearCuentaAsync(string email)
+        //{
+        //    // Obtener el usuario por correo electrónico
+        //    var usuario = await _usuarioRepository.ObtenerPorEmailAsync(email);
+
+        //    // Verificar si el usuario existe
+        //    if (usuario == null)
+        //    {
+        //        throw new Exception("El usuario no existe.");
+        //    }
+
+        //    // Desbloquear la cuenta y reiniciar intentos fallidos
+        //    usuario.Bloqueado = false;
+        //    usuario.IntentosFallidos = 0;
+
+        //    // Generar una nueva clave
+        //    usuario.Clave = GenerarClave();
+
+        //    // Actualizar el usuario en la base de datos
+        //    await _usuarioRepository.ActualizarAsync(usuario);
+
+        //    // Enviar notificación por correo
+        //    var subject = "Tu cuenta ha sido desbloqueada";
+        //    var body = $"Hola {usuario.Nombre},<br/><br/>" +
+        //                "Tu cuenta ha sido desbloqueada exitosamente. " +
+        //                "Ahora puedes iniciar sesión nuevamente.<br/><br/>" +
+        //                $"Tu nueva clave es: {usuario.PasswordHash}"; // Enviar la nueva clave en el correo
+
+        //    // Asumimos que tienes un servicio de correo inyectado
+        //    await _emailService.EnviarCorreoAsync(usuario.Email, subject, body);
+
+        //    return true; // Indicar que la operación fue exitosa
+        //}
+        #endregion
+
 
 
 
