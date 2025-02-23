@@ -12,6 +12,10 @@ using CashFlowly.Infrastructure.Persistence.Repositories;
 using CashFlowly.Infrastructure.Persistence.Contexts;
 using System.Web;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+
 
 namespace CashFlowly.Infrastructure.Persistence.Services
 {
@@ -21,13 +25,15 @@ namespace CashFlowly.Infrastructure.Persistence.Services
         private readonly IConfiguration _configuration;
         private readonly CashFlowlyDbContext _context;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(UsuarioRepository usuarioRepository, IConfiguration configuration, CashFlowlyDbContext context, IEmailService emailService)
+        public AuthService(UsuarioRepository usuarioRepository, IConfiguration configuration, CashFlowlyDbContext context, IEmailService emailService, IHttpContextAccessor httpContextAccessor)
         {
             _usuarioRepository = usuarioRepository;
             _configuration = configuration;
             _context = context;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<string> RegistrarUsuarioAsync(UsuarioRegistroDto usuarioDto)
@@ -106,7 +112,7 @@ namespace CashFlowly.Infrastructure.Persistence.Services
         {
             var usuario = await _usuarioRepository.ObtenerPorEmailAsync(loginDto.Email);
 
-            if (usuario == null || usuario.Bloqueado || !usuario.Confirmado)
+            if (usuario == null || usuario.Suspendido || !usuario.Confirmado)
             {
                 throw new UnauthorizedAccessException("Usuario no autorizado o cuenta no verificada.");
             }
@@ -117,16 +123,14 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             {
                 usuario.IntentosFallidos++;
 
-                // 🚨 Bloqueo si excede intentos fallidos permitidos
                 if (usuario.IntentosFallidos >= 10)
                 {
-                    usuario.Bloqueado = true;
+                    usuario.Suspendido = true;
                     await _usuarioRepository.ActualizarAsync(usuario);
+                    await _emailService.EnviarCorreoAsync(usuario.Email, "Cuenta suspendida",
+                        "Tu cuenta ha sido suspendida por múltiples intentos fallidos. Si no fuiste tú, contacta soporte.");
 
-                    await _emailService.EnviarCorreoAsync(usuario.Email, "Cuenta bloqueada",
-                        "Tu cuenta ha sido bloqueada por múltiples intentos fallidos. Si no fuiste tú, contacta soporte.");
-
-                    throw new UnauthorizedAccessException("Cuenta bloqueada por demasiados intentos fallidos.");
+                    throw new UnauthorizedAccessException("Cuenta suspendida por demasiados intentos fallidos.");
                 }
 
                 await _usuarioRepository.ActualizarAsync(usuario);
@@ -134,11 +138,42 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             }
 
             usuario.IntentosFallidos = 0;
+            usuario.RecordarSesion = loginDto.RecordarSesion;
             await _usuarioRepository.ActualizarAsync(usuario);
 
-            var token = GenerarToken(usuario);
+            // Configurar la duración del token
+            var tokenDuration = loginDto.RecordarSesion ? TimeSpan.FromDays(30) : TimeSpan.FromMinutes(30);
+            var token = GenerarToken(usuario, tokenDuration);
+
+            // Llamar al método para crear la cookie
+            await CrearCookieAsync(usuario, loginDto.RecordarSesion);
+
             return token;
         }
+
+        private async Task CrearCookieAsync(Usuario usuario, bool recordarSesion)
+        {
+            // Crear los claims
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.Name, usuario.Email)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            // Configurar la duración de la cookie
+            var cookieExpiration = recordarSesion ? TimeSpan.FromDays(30) : TimeSpan.FromMinutes(30);
+
+            // Autenticación de la cookie
+            await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties
+            {
+                IsPersistent = recordarSesion,
+                ExpiresUtc = DateTimeOffset.UtcNow.Add(cookieExpiration)
+            });
+        }
+
         #region no implementado(desbloquear usuario)
 
         //public async Task<bool> DesbloquearCuentaAsync(string email)
@@ -177,7 +212,7 @@ namespace CashFlowly.Infrastructure.Persistence.Services
         #endregion
 
 
-        private string GenerarToken(Usuario usuario)
+        private string GenerarToken(Usuario usuario, TimeSpan duration)
         {
             var claims = new[]
             {
@@ -190,11 +225,14 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            //tiempo de la sesion
+            var expiration = DateTime.UtcNow.Add(duration);
+
             var token = new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddHours(2),
+                expires: expiration,
                 signingCredentials: creds
             );
 
