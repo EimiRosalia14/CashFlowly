@@ -39,6 +39,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.LoginPath = "/api/usuarios/login"; // Ruta de login
+});
+
+builder.Services.AddHttpContextAccessor();
+
+// Agregar autorización
 builder.Services.AddAuthorization();
 
 // Configuración de Swagger con autenticación JWT
@@ -83,9 +99,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthentication();  
-app.UseAuthorization();   
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapControllers();     
+app.MapControllers();
 
 app.Run();
