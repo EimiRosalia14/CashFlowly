@@ -38,5 +38,10 @@ namespace CashFlowly.Infrastructure.Persistence.Repositories
             return await _context.Usuarios.FirstOrDefaultAsync(u => u.TokenVerificacion == token);
         }
 
+        public async Task<Usuario> ObtenerPorIdAsync(int id)
+        {
+            return await _context.Usuarios.FindAsync(id);
+        }
+
     }
 }

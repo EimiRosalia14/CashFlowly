@@ -46,7 +46,7 @@ namespace CashFlowly.Infrastructure.Persistence.Contexts
                 .WithMany(c => c.Transacciones)
                 .HasForeignKey(t => t.CategoriaId);
 
-            // Corrección: Configurar la precisión de los valores `decimal`
+            // Configuración de precisión para evitar truncamientos en SQL Server
             modelBuilder.Entity<Usuario>()
                 .Property(u => u.SaldoDisponible)
                 .HasPrecision(18, 2);

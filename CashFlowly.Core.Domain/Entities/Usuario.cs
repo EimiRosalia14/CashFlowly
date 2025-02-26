@@ -22,7 +22,7 @@ namespace CashFlowly.Core.Domain.Entities
         public string? TokenVerificacion { get; set; }
 
         // Nuevo: Saldo Disponible para gastar
-        public decimal SaldoDisponible { get; set; }
+        public decimal SaldoDisponible { get; set; } = 0;
 
         // Relaciones
         public ICollection<Transaccion> Transacciones { get; set; }
