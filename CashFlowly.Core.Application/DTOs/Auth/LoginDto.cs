@@ -8,4 +8,5 @@ public class LoginDto
 
     [Required(ErrorMessage = "La contraseña es obligatoria.")]
     public string Password { get; set; }
+    public bool RecordarSesion { get; set; }
 }
