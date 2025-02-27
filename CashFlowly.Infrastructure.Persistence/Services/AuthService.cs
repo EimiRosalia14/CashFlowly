@@ -15,19 +15,20 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using CashFlowly.Core.Application.Interfaces.Repositories;
 
 
 namespace CashFlowly.Infrastructure.Persistence.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly UsuarioRepository _usuarioRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
         private readonly IConfiguration _configuration;
         private readonly CashFlowlyDbContext _context;
         private readonly IEmailService _emailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(UsuarioRepository usuarioRepository, IConfiguration configuration, CashFlowlyDbContext context, IEmailService emailService, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IUsuarioRepository usuarioRepository, IConfiguration configuration, CashFlowlyDbContext context, IEmailService emailService, IHttpContextAccessor httpContextAccessor)
         {
             _usuarioRepository = usuarioRepository;
             _configuration = configuration;
@@ -153,26 +154,28 @@ namespace CashFlowly.Infrastructure.Persistence.Services
 
         private async Task CrearCookieAsync(Usuario usuario, bool recordarSesion)
         {
-            // Crear los claims
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-                new Claim(ClaimTypes.Name, usuario.Email)
-            };
+    {
+        new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+        new Claim(ClaimTypes.Name, usuario.Email)
+    };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            // Configurar la duración de la cookie
             var cookieExpiration = recordarSesion ? TimeSpan.FromDays(30) : TimeSpan.FromMinutes(30);
 
-            // Autenticación de la cookie
-            await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties
-            {
-                IsPersistent = recordarSesion,
-                ExpiresUtc = DateTimeOffset.UtcNow.Add(cookieExpiration)
-            });
+            await _httpContextAccessor.HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                claimsPrincipal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = recordarSesion,
+                    ExpiresUtc = DateTimeOffset.UtcNow.Add(cookieExpiration),
+                    AllowRefresh = true // Permite renovar la sesión automáticamente
+                });
         }
+
 
         #region no implementado(desbloquear usuario)
 

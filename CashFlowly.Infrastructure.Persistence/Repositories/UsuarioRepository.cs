@@ -1,5 +1,6 @@
 ﻿using CashFlowly.Core.Domain.Entities;
 using CashFlowly.Infrastructure.Persistence.Contexts;
+using CashFlowly.Core.Application.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CashFlowly.Infrastructure.Persistence.Repositories
 {
-    public class UsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
         private readonly CashFlowlyDbContext _context;
 
@@ -41,6 +42,12 @@ namespace CashFlowly.Infrastructure.Persistence.Repositories
         public async Task<Usuario> ObtenerPorIdAsync(int id)
         {
             return await _context.Usuarios.FindAsync(id);
+        }
+
+        public async Task IngresarSaldo(Usuario usuario)
+        {
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
         }
 
     }

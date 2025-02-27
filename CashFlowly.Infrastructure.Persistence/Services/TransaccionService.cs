@@ -1,4 +1,5 @@
 ﻿using CashFlowly.Core.Application.DTOs.Transaccion;
+using CashFlowly.Core.Application.Interfaces.Repositories;
 using CashFlowly.Core.Application.Interfaces.Services;
 using CashFlowly.Core.Domain.Entities;
 using CashFlowly.Infrastructure.Persistence.Repositories;
@@ -13,9 +14,9 @@ namespace CashFlowly.Infrastructure.Persistence.Services
     public class TransaccionService : ITransaccionService
     {
         private readonly TransaccionRepository _transaccionRepository;
-        private readonly UsuarioRepository _usuarioRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        public TransaccionService(TransaccionRepository transaccionRepository, UsuarioRepository usuarioRepository)
+        public TransaccionService(TransaccionRepository transaccionRepository, IUsuarioRepository usuarioRepository)
         {
             _transaccionRepository = transaccionRepository;
             _usuarioRepository = usuarioRepository;
