@@ -17,12 +17,10 @@ builder.Services.AddDbContext<CashFlowlyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Inyección de dependencias (Repositorios y Servicios)
-builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<ITransaccionService, TransaccionService>();
-builder.Services.AddScoped<TransaccionRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
 
 // Configuración de JWT
 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);

@@ -14,4 +14,9 @@
     <ProjectReference Include="..\CashFlowly.Core.Domain\CashFlowly.Core.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\Categoria\" />
+    <Folder Include="DTOs\Usuario\" />
+  </ItemGroup>
+
 </Project>

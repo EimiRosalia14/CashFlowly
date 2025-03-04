@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace CashFlowly.Core.Domain.Entities
 {
-    public class Categoria
+    public class CategoriaIngreso
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
 
-        // Relación con Transacciones
-        public ICollection<Transaccion> Transacciones { get; set; }
+        // Relación con Ingresos
+        public ICollection<Ingreso> Ingresos { get; set; }
     }
 }

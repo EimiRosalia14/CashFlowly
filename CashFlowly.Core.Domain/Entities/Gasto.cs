@@ -6,14 +6,18 @@ using System.Threading.Tasks;
 
 namespace CashFlowly.Core.Domain.Entities
 {
-    public class MetaFinanciera
+    public class Gasto
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
-        public decimal Objetivo { get; set; }
-        public DateTime FechaPropuesta { get; set; }
+        public decimal Monto { get; set; }
+        public DateTime Fecha { get; set; }
 
-        // Relación con Usuario
+        public int CategoriaId { get; set; }
+        public CategoriaGasto Categoria { get; set; }
+
+        public int CuentaId { get; set; }
+        public Cuenta Cuenta { get; set; }
+
         public int UsuarioId { get; set; }
         public Usuario Usuario { get; set; }
     }

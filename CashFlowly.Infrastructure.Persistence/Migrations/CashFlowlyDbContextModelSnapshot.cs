@@ -22,35 +22,7 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Alerta", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Leida")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Mensaje")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Alertas");
-                });
-
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Categoria", b =>
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaGasto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,64 +36,46 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("CategoriasGastos");
                 });
 
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.MensajeChatbot", b =>
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaIngreso", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Pregunta")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Respuesta")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("MensajesChatbot");
-                });
-
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.MetaFinanciera", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Alcanzada")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("FechaLimite")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("MontoAhorrado")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("MontoObjetivo")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoriasIngresos");
+                });
+
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Cuenta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NumeroDeCuenta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("SaldoDisponible")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
 
@@ -129,10 +83,10 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("MetasFinancieras");
+                    b.ToTable("Cuentas");
                 });
 
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Transaccion", b =>
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Gasto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -143,9 +97,8 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.Property<int>("CategoriaId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CuentaId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
@@ -154,9 +107,43 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoriaId");
+
+                    b.HasIndex("CuentaId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Gastos");
+                });
+
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Ingreso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CuentaId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IngresoFijo")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Monto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
@@ -165,9 +152,40 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CategoriaId");
 
+                    b.HasIndex("CuentaId");
+
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Transacciones");
+                    b.ToTable("Ingresos");
+                });
+
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.MetaFinanciera", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaPropuesta")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Objetivo")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("MetasFinancieras");
                 });
 
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Usuario", b =>
@@ -202,10 +220,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.Property<bool>("RecordarSesion")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("SaldoDisponible")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<bool>("Suspendido")
                         .HasColumnType("bit");
 
@@ -220,10 +234,10 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Alerta", b =>
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Cuenta", b =>
                 {
                     b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("Alertas")
+                        .WithMany("Cuentas")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -231,13 +245,56 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.MensajeChatbot", b =>
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Gasto", b =>
                 {
-                    b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("CashFlowly.Core.Domain.Entities.CategoriaGasto", "Categoria")
+                        .WithMany("Gastos")
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("CashFlowly.Core.Domain.Entities.Cuenta", "Cuenta")
+                        .WithMany("Gastos")
+                        .HasForeignKey("CuentaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
+                        .WithMany("Gastos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
+
+                    b.Navigation("Cuenta");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Ingreso", b =>
+                {
+                    b.HasOne("CashFlowly.Core.Domain.Entities.CategoriaIngreso", "Categoria")
+                        .WithMany("Ingresos")
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CashFlowly.Core.Domain.Entities.Cuenta", "Cuenta")
+                        .WithMany("Ingresos")
+                        .HasForeignKey("CuentaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
+                        .WithMany("Ingresos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
+
+                    b.Navigation("Cuenta");
 
                     b.Navigation("Usuario");
                 });
@@ -245,7 +302,7 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.MetaFinanciera", b =>
                 {
                     b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("MetasFinancieras")
+                        .WithMany("Metas")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -253,37 +310,32 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Transaccion", b =>
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaGasto", b =>
                 {
-                    b.HasOne("CashFlowly.Core.Domain.Entities.Categoria", "Categoria")
-                        .WithMany("Transacciones")
-                        .HasForeignKey("CategoriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("Transacciones")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Categoria");
-
-                    b.Navigation("Usuario");
+                    b.Navigation("Gastos");
                 });
 
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Categoria", b =>
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaIngreso", b =>
                 {
-                    b.Navigation("Transacciones");
+                    b.Navigation("Ingresos");
+                });
+
+            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Cuenta", b =>
+                {
+                    b.Navigation("Gastos");
+
+                    b.Navigation("Ingresos");
                 });
 
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Usuario", b =>
                 {
-                    b.Navigation("Alertas");
+                    b.Navigation("Cuentas");
 
-                    b.Navigation("MetasFinancieras");
+                    b.Navigation("Gastos");
 
-                    b.Navigation("Transacciones");
+                    b.Navigation("Ingresos");
+
+                    b.Navigation("Metas");
                 });
 #pragma warning restore 612, 618
         }

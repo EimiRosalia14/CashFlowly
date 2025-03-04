@@ -14,53 +14,80 @@ namespace CashFlowly.Infrastructure.Persistence.Contexts
         public CashFlowlyDbContext(DbContextOptions<CashFlowlyDbContext> options) : base(options) { }
 
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Transaccion> Transacciones { get; set; }
-        public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Cuenta> Cuentas { get; set; }
+        public DbSet<Ingreso> Ingresos { get; set; }
+        public DbSet<Gasto> Gastos { get; set; }
+        public DbSet<CategoriaIngreso> CategoriasIngresos { get; set; }
+        public DbSet<CategoriaGasto> CategoriasGastos { get; set; }
         public DbSet<MetaFinanciera> MetasFinancieras { get; set; }
-        public DbSet<Alerta> Alertas { get; set; }
-        public DbSet<MensajeChatbot> MensajesChatbot { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Restringir el correo a único en la BD
-            modelBuilder.Entity<Usuario>().HasIndex(u => u.Email).IsUnique();
-
-            // Relaciones entre entidades
+            // Índice único para Email
             modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.Transacciones)
-                .WithOne(t => t.Usuario)
-                .HasForeignKey(t => t.UsuarioId);
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
+            // Relaciones de Usuario
             modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.MetasFinancieras)
-                .WithOne(m => m.Usuario)
-                .HasForeignKey(m => m.UsuarioId);
+                .HasMany(u => u.Cuentas)
+                .WithOne(c => c.Usuario)
+                .HasForeignKey(c => c.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.Alertas)
-                .WithOne(a => a.Usuario)
-                .HasForeignKey(a => a.UsuarioId);
+                .HasMany(u => u.Ingresos)
+                .WithOne(i => i.Usuario)
+                .HasForeignKey(i => i.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Transaccion>()
-                .HasOne(t => t.Categoria)
-                .WithMany(c => c.Transacciones)
-                .HasForeignKey(t => t.CategoriaId);
-
-            // Configuración de precisión para evitar truncamientos en SQL Server
             modelBuilder.Entity<Usuario>()
-                .Property(u => u.SaldoDisponible)
+                .HasMany(u => u.Gastos)
+                .WithOne(g => g.Usuario)
+                .HasForeignKey(g => g.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relaciones de Gasto
+            modelBuilder.Entity<Gasto>()
+                .HasOne(g => g.Categoria)
+                .WithMany(c => c.Gastos)
+                .HasForeignKey(g => g.CategoriaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Gasto>()
+                .HasOne(g => g.Cuenta)
+                .WithMany(c => c.Gastos)
+                .HasForeignKey(g => g.CuentaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relaciones de Ingreso
+            modelBuilder.Entity<Ingreso>()
+                .HasOne(i => i.Categoria)
+                .WithMany(c => c.Ingresos)
+                .HasForeignKey(i => i.CategoriaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Ingreso>()
+                .HasOne(i => i.Cuenta)
+                .WithMany(c => c.Ingresos)
+                .HasForeignKey(i => i.CuentaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configuración de precisión en campos decimales para evitar truncamientos
+            modelBuilder.Entity<Cuenta>()
+                .Property(c => c.SaldoDisponible)
                 .HasPrecision(18, 2);
 
-            modelBuilder.Entity<Transaccion>()
-                .Property(t => t.Monto)
+            modelBuilder.Entity<Gasto>()
+                .Property(g => g.Monto)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Ingreso>()
+                .Property(i => i.Monto)
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<MetaFinanciera>()
-                .Property(m => m.MontoObjetivo)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<MetaFinanciera>()
-                .Property(m => m.MontoAhorrado)
+                .Property(m => m.Objetivo)
                 .HasPrecision(18, 2);
         }
     }
