@@ -30,13 +30,20 @@ namespace CashFlowly.Infrastructure.Persistence.Repositories
         {
             return await _context.Gastos
                 .Where(g => g.UsuarioId == usuarioId)
+                .Include(g => g.Cuenta)
+                .Include(g => g.Categoria)
+                .Include(g => g.CategoriaPersonalizada)
                 .ToListAsync();
         }
 
         //crea un metodo que edite los gastos
         public async Task<Gasto> ObtenerGastoPorIdAsync(int gastoId)
         {
-            return await _context.Gastos.FindAsync(gastoId);
+            return await _context.Gastos
+                .Include(g => g.Cuenta)
+                .Include(g => g.Categoria)
+                .Include(g => g.CategoriaPersonalizada)
+                .FirstOrDefaultAsync(g => g.Id == gastoId);
         }
 
         public async Task EditarGastoAsync(Gasto gasto)

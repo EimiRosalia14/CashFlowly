@@ -11,9 +11,9 @@ namespace CashFlowly.Core.Application.DTOs.Gastos
         public int Id { get; set; }
         public decimal Monto { get; set; }
         public DateTime Fecha { get; set; }
-        public string Categoria { get; set; }
+        public string? Categoria { get; set; }
         public string Cuenta { get; set; }
         public string Usuario { get; set; }
-        public string CategoriaP { get; set; }
+        public string? CategoriaPersonalizada { get; set; }
     }
 }

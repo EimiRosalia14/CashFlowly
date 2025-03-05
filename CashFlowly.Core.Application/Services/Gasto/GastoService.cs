@@ -67,8 +67,8 @@ namespace CashFlowly.Core.Application.Services.Gasto
                     Fecha = g.Fecha,
                     Categoria = g.Categoria.Nombre,
                     Cuenta = g.Cuenta.Nombre,
-                    Usuario = g.Usuario.Nombre,
-                    CategoriaP = g.CategoriaPersonalizada.Nombre
+                    CategoriaPersonalizada = g.CategoriaPersonalizada?.Nombre ?? "Sin categoría personalizada"
+
                 }).ToList();
             }
             catch (Exception ex)

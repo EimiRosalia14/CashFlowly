@@ -1,11 +1,13 @@
 ﻿using System.Security.Claims;
 using CashFlowly.Core.Application.DTOs.Gastos;
 using CashFlowly.Core.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CashFlowly.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GastoController : ControllerBase
