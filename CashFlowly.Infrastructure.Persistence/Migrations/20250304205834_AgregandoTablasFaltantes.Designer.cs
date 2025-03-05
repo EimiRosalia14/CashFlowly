@@ -4,6 +4,7 @@ using CashFlowly.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CashFlowly.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CashFlowlyDbContext))]
-    partial class CashFlowlyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304205834_AgregandoTablasFaltantes")]
+    partial class AgregandoTablasFaltantes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,33 +40,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CategoriasGastos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Vivienda"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Alimentación"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Transporte"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Salud"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Entretenimiento"
-                        });
                 });
 
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaGastoPersonalizada", b =>
@@ -103,33 +79,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CategoriasIngresos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Salario"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Deudas cobradas"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Regalos / Donaciones"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Ventas personales"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Inversiones"
-                        });
                 });
 
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaIngresoPersonalizada", b =>

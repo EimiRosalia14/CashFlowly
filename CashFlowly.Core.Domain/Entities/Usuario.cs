@@ -30,6 +30,7 @@ namespace CashFlowly.Core.Domain.Entities
         public ICollection<Ingreso> Ingresos { get; set; } = new List<Ingreso>();
         public ICollection<Gasto> Gastos { get; set; } = new List<Gasto>();
         public ICollection<MetaFinanciera> Metas { get; set; } = new List<MetaFinanciera>();
-
+        public ICollection<CategoriaIngresoPersonalizada> CategoriasIngresosPersonalizadas { get; set; } = new List<CategoriaIngresoPersonalizada>();
+        public ICollection<CategoriaGastoPersonalizada> CategoriasGastosPersonalizadas { get; set; } = new List<CategoriaGastoPersonalizada>();
     }
 }
