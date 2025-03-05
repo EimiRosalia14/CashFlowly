@@ -12,6 +12,10 @@ using CashFlowly.Core.Application.Services;
 using CashFlowly.Core.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CashFlowly.Core.Application.Services.Gasto;
+using System.Reflection;
+using CashFlowly.Core.Application.Services.Cuentas;
+using CashFlowly.Core.Application.Interfaces.Repositories.CashFlowly.Core.Application.Interfaces.Repositories;
+using CashFlowly.Core.Application.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,15 +32,21 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IGastosRepository, GastosRepository>();
 builder.Services.AddScoped<IGastoService, GastoService>();
+builder.Services.AddScoped<ICuentasService, CuentasService>();
 
 // Inyección de dependencias (Repositorios de Categorías)
 builder.Services.AddScoped<ICategoriaRepository<CategoriaIngreso>, CategoriaRepository<CategoriaIngreso>>();
 builder.Services.AddScoped<ICategoriaRepository<CategoriaGasto>, CategoriaRepository<CategoriaGasto>>();
 builder.Services.AddScoped<ICategoriaIngresoPersonalizadaRepository, CategoriaIngresoPersonalizadaRepository>();
 builder.Services.AddScoped<ICategoriaGastoPersonalizadaRepository, CategoriaGastoPersonalizadaRepository>();
+builder.Services.AddScoped<ICuentasRepository, CuentasRepository>();
 
 // Inyección de dependencias (Servicios de Categorías)
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+
+#region Mapping
+builder.Services.AddAutoMapper(typeof(DefaultProfile));
+#endregion
 
 // Configuración de Autenticación y Autorización
 builder.Services.AddAuthentication(options =>
