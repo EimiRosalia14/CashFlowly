@@ -11,6 +11,7 @@ using System.Text;
 using CashFlowly.Core.Application.Services;
 using CashFlowly.Core.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using CashFlowly.Core.Application.Services.Gasto;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IGastosRepository, GastosRepository>();
+builder.Services.AddScoped<IGastoService, GastoService>();
 
 // Inyección de dependencias (Repositorios de Categorías)
 builder.Services.AddScoped<ICategoriaRepository<CategoriaIngreso>, CategoriaRepository<CategoriaIngreso>>();

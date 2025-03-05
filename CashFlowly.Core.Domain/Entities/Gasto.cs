@@ -12,8 +12,11 @@ namespace CashFlowly.Core.Domain.Entities
         public decimal Monto { get; set; }
         public DateTime Fecha { get; set; }
 
-        public int CategoriaId { get; set; }
+        public int? CategoriaId { get; set; }
         public CategoriaGasto Categoria { get; set; }
+
+        public int? CategoriaPersonalizadaId { get; set; }
+        public CategoriaGastoPersonalizada CategoriaPersonalizada { get; set; }
 
         public int CuentaId { get; set; }
         public Cuenta Cuenta { get; set; }
