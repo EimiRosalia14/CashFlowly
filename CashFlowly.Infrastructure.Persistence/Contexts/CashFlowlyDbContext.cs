@@ -19,6 +19,8 @@ namespace CashFlowly.Infrastructure.Persistence.Contexts
         public DbSet<Gasto> Gastos { get; set; }
         public DbSet<CategoriaIngreso> CategoriasIngresos { get; set; }
         public DbSet<CategoriaGasto> CategoriasGastos { get; set; }
+        public DbSet<CategoriaIngresoPersonalizada> CategoriasIngresosPersonalizadas { get; set; }
+        public DbSet<CategoriaGastoPersonalizada> CategoriasGastosPersonalizadas { get; set; }
         public DbSet<MetaFinanciera> MetasFinancieras { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,50 +30,33 @@ namespace CashFlowly.Infrastructure.Persistence.Contexts
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            // Relaciones de Usuario
-            modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.Cuentas)
-                .WithOne(c => c.Usuario)
-                .HasForeignKey(c => c.UsuarioId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.Ingresos)
-                .WithOne(i => i.Usuario)
-                .HasForeignKey(i => i.UsuarioId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.Gastos)
-                .WithOne(g => g.Usuario)
+            // Relación Usuario -> Gastos (SIN DELETE CASCADE)
+            modelBuilder.Entity<Gasto>()
+                .HasOne(g => g.Usuario)
+                .WithMany(u => u.Gastos)
                 .HasForeignKey(g => g.UsuarioId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
 
-            // Relaciones de Gasto
-            modelBuilder.Entity<Gasto>()
-                .HasOne(g => g.Categoria)
-                .WithMany(c => c.Gastos)
-                .HasForeignKey(g => g.CategoriaId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Gasto>()
-                .HasOne(g => g.Cuenta)
-                .WithMany(c => c.Gastos)
-                .HasForeignKey(g => g.CuentaId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Relaciones de Ingreso
+            // Relación Usuario -> Ingresos (SIN DELETE CASCADE)
             modelBuilder.Entity<Ingreso>()
-                .HasOne(i => i.Categoria)
-                .WithMany(c => c.Ingresos)
-                .HasForeignKey(i => i.CategoriaId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(i => i.Usuario)
+                .WithMany(u => u.Ingresos)
+                .HasForeignKey(i => i.UsuarioId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
 
-            modelBuilder.Entity<Ingreso>()
-                .HasOne(i => i.Cuenta)
-                .WithMany(c => c.Ingresos)
-                .HasForeignKey(i => i.CuentaId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Relación Usuario -> Cuentas (SIN DELETE CASCADE)
+            modelBuilder.Entity<Cuenta>()
+                .HasOne(c => c.Usuario)
+                .WithMany(u => u.Cuentas)
+                .HasForeignKey(c => c.UsuarioId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
+
+            // Relación Usuario -> Metas (SIN DELETE CASCADE)
+            modelBuilder.Entity<MetaFinanciera>()
+                .HasOne(m => m.Usuario)
+                .WithMany(u => u.Metas)
+                .HasForeignKey(m => m.UsuarioId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
 
             // Configuración de precisión en campos decimales para evitar truncamientos
             modelBuilder.Entity<Cuenta>()
@@ -89,6 +74,24 @@ namespace CashFlowly.Infrastructure.Persistence.Contexts
             modelBuilder.Entity<MetaFinanciera>()
                 .Property(m => m.Objetivo)
                 .HasPrecision(18, 2);
+
+            // Agregar Categorías Fijas de Ingresos
+            modelBuilder.Entity<CategoriaIngreso>().HasData(
+                new CategoriaIngreso { Id = 1, Nombre = "Salario" },
+                new CategoriaIngreso { Id = 2, Nombre = "Deudas cobradas" },
+                new CategoriaIngreso { Id = 3, Nombre = "Regalos / Donaciones" },
+                new CategoriaIngreso { Id = 4, Nombre = "Ventas personales" },
+                new CategoriaIngreso { Id = 5, Nombre = "Inversiones" }
+            );
+
+            // Agregar Categorías Fijas de Gastos
+            modelBuilder.Entity<CategoriaGasto>().HasData(
+                new CategoriaGasto { Id = 1, Nombre = "Vivienda" },
+                new CategoriaGasto { Id = 2, Nombre = "Alimentación" },
+                new CategoriaGasto { Id = 3, Nombre = "Transporte" },
+                new CategoriaGasto { Id = 4, Nombre = "Salud" },
+                new CategoriaGasto { Id = 5, Nombre = "Entretenimiento" }
+            );
         }
     }
 }
