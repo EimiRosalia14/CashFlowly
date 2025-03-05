@@ -50,8 +50,8 @@ namespace CashFlowly.Core.Application.Services.Ingresos
                 IngresoFijo = ingresoDto.IngresoFijo,
                 UsuarioId = usuarioId,
                 CuentaId = ingresoDto.CuentaId,
-                CategoriaId = ingresoDto.CategoriaId,  // Nombre corregido
-                CategoriaPersonalizadaId = ingresoDto.CategoriaPersonalizadaId  // Nombre corregido
+                CategoriaId = ingresoDto.CategoriaId,
+                CategoriaPersonalizadaId = ingresoDto.CategoriaPersonalizadaId == 0 ? null : ingresoDto.CategoriaPersonalizadaId
             };
 
             // Sumar el saldo a la cuenta
@@ -116,7 +116,21 @@ namespace CashFlowly.Core.Application.Services.Ingresos
                 throw new Exception("Ingreso no válido o no pertenece al usuario.");
             }
 
+            // Obtener la cuenta del ingreso
+            var cuenta = await _cuentasRepository.GetByIdAsync(ingreso.CuentaId);
+            if (cuenta == null)
+            {
+                throw new Exception("Cuenta no encontrada.");
+            }
+
+            // Restar el monto del ingreso eliminado al saldo de la cuenta
+            cuenta.SaldoDisponible -= ingreso.Monto;
+
+            // Eliminar el ingreso
             await _ingresosRepository.EliminarIngresoAsync(ingresoId);
+
+            // Guardar cambios en la cuenta
+            await _cuentasRepository.UpdateAsync(cuenta, cuenta.Id);
         }
 
         public async Task ProcesarIngresosFijos()

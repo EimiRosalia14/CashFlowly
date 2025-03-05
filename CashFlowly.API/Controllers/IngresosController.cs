@@ -37,5 +37,13 @@ namespace CashFlowly.API.Controllers
             var ingresos = await _ingresosService.ObtenerIngresosPorUsuarioAsync(usuarioId);
             return Ok(ingresos);
         }
+
+        [HttpDelete("eliminar/{ingresoId}")]
+        public async Task<IActionResult> EliminarIngreso(int ingresoId)
+        {
+            int usuarioId = GetUsuarioId();
+            await _ingresosService.EliminarIngresoAsync(ingresoId, usuarioId);
+            return Ok(new { message = "Ingreso eliminado correctamente." });
+        }
     }
 }
