@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace CashFlowly.Core.Application.DTOs.Gastos
 {
-    public class MostrarGastos
+    public class EditarrGastoDto
     {
         public int Id { get; set; }
         public decimal Monto { get; set; }
         public DateTime Fecha { get; set; }
-        public string Categoria { get; set; }
-        public string Cuenta { get; set; }
-        public string Usuario { get; set; }
-        public string CategoriaP { get; set; }
+        public int? CategoriaGastoId { get; set; } // Puede ser null
+        public int? CategoriaGastoPersonalizadoId { get; set; } // Puede ser null
+        public int CuentaId { get; set; }
+
     }
 }

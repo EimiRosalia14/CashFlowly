@@ -14,5 +14,6 @@ namespace CashFlowly.Core.Domain.Entities
         // Relación con el Usuario
         public int UsuarioId { get; set; }
         public Usuario Usuario { get; set; }
+        public ICollection<Gasto> Gastos { get; set; }
     }
 }

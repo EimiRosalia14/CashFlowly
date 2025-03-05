@@ -8,12 +8,11 @@ namespace CashFlowly.Core.Application.DTOs.Gastos
 {
     public class RegistrarGastoDto
     {
-        public int Id { get; set; }
         public decimal Monto { get; set; }
         public DateTime Fecha { get; set; }
-        public int CategoriaId { get; set; }
+        public int? CategoriaGastoId { get; set; } // Puede ser null
+        public int? CategoriaGastoPersonalizadoId { get; set; } // Puede ser null
         public int CuentaId { get; set; }
-        public int UsuarioId { get; set; }
 
     }
 }
