@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CashFlowly.Core.Application.DTOs.Cuentas;
+using CashFlowly.Core.Application.DTOs.Ingresos;
 using CashFlowly.Core.Domain.Entities;
 
 namespace CashFlowly.Core.Application.Mappings

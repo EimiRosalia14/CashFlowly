@@ -13,13 +13,19 @@ namespace CashFlowly.Core.Domain.Entities
         public bool IngresoFijo { get; set; }
         public DateTime Fecha { get; set; }
 
-        public int CategoriaId { get; set; }
-        public CategoriaIngreso Categoria { get; set; }
+        // Categoría fija (opcional)
+        public int? CategoriaId { get; set; }
+        public CategoriaIngreso? Categoria { get; set; }
+
+        // Categoría personalizada (opcional)
+        public int? CategoriaPersonalizadaId { get; set; }  // Nombre corregido
+        public CategoriaIngresoPersonalizada? CategoriaPersonalizada { get; set; }
 
         public int CuentaId { get; set; }
         public Cuenta Cuenta { get; set; }
 
         public int UsuarioId { get; set; }
         public Usuario Usuario { get; set; }
+
     }
 }

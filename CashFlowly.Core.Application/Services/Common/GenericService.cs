@@ -19,7 +19,7 @@ namespace CashFlowly.Core.Application.Services.Common
             _mapper = mapper;
         }
 
-        public async Task<Response> CreateAsync(CreateDTO createDTO)
+        public virtual async Task<Response> CreateAsync(CreateDTO createDTO)
         {
             var createEntity = _mapper.Map<Entity>(createDTO);
             try

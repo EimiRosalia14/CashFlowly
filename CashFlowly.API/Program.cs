@@ -12,54 +12,46 @@ using CashFlowly.Core.Application.Services;
 using CashFlowly.Core.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CashFlowly.Core.Application.Services.Gasto;
-using System.Reflection;
 using CashFlowly.Core.Application.Services.Cuentas;
-using CashFlowly.Core.Application.Interfaces.Repositories.CashFlowly.Core.Application.Interfaces.Repositories;
+using CashFlowly.Core.Application.Services.Ingresos;
 using CashFlowly.Core.Application.Mappings;
+using CashFlowly.Core.Application.Interfaces.Repositories.CashFlowly.Core.Application.Interfaces.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de la base de datos
+// Configuración de la Base de Datos
 builder.Services.AddDbContext<CashFlowlyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar HttpContextAccessor para inyectarlo en los servicios
+// Registrar HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
-// Inyección de dependencias (Servicios)
+// Inyección de Dependencias - Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<IGastosRepository, GastosRepository>();
 builder.Services.AddScoped<IGastoService, GastoService>();
 builder.Services.AddScoped<ICuentasService, CuentasService>();
+builder.Services.AddScoped<IIngresosService, IngresosService>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();  
 
-// Inyección de dependencias (Repositorios de Categorías)
+// Inyección de Dependencias - Repositorios
+builder.Services.AddScoped<IGastosRepository, GastosRepository>();
+builder.Services.AddScoped<ICuentasRepository, CuentasRepository>();
+builder.Services.AddScoped<IIngresosRepository, IngresosRepository>();
 builder.Services.AddScoped<ICategoriaRepository<CategoriaIngreso>, CategoriaRepository<CategoriaIngreso>>();
 builder.Services.AddScoped<ICategoriaRepository<CategoriaGasto>, CategoriaRepository<CategoriaGasto>>();
 builder.Services.AddScoped<ICategoriaIngresoPersonalizadaRepository, CategoriaIngresoPersonalizadaRepository>();
 builder.Services.AddScoped<ICategoriaGastoPersonalizadaRepository, CategoriaGastoPersonalizadaRepository>();
-builder.Services.AddScoped<ICuentasRepository, CuentasRepository>();
 
-// Inyección de dependencias (Servicios de Categorías)
-builder.Services.AddScoped<ICategoriaService, CategoriaService>();
-
-#region Mapping
+// Inyección de AutoMapper
 builder.Services.AddAutoMapper(typeof(DefaultProfile));
-#endregion
 
 // Configuración de Autenticación y Autorización
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-{
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.LoginPath = "/api/usuarios/login"; // Ruta de login
 })
 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 {
@@ -73,12 +65,19 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.LoginPath = "/api/usuarios/login"; // Ruta de login
 });
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-// Configuración de Swagger con autenticación JWT
+// Configuración de Swagger con Autenticación JWT
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "CashFlowly.API", Version = "v1" });
@@ -111,7 +110,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Habilitar Swagger solo en desarrollo
+// Habilitar Swagger solo en Desarrollo
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

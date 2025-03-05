@@ -44,6 +44,12 @@ namespace CashFlowly.Infrastructure.Persistence.Contexts
                 .HasForeignKey(i => i.UsuarioId)
                 .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
 
+            modelBuilder.Entity<Ingreso>()
+                .HasOne(i => i.CategoriaPersonalizada)
+                .WithMany()
+                .HasForeignKey(i => i.CategoriaPersonalizadaId)
+                .OnDelete(DeleteBehavior.SetNull); // Permitir NULL si se elimina la categoría personalizada
+
             // Relación Usuario -> Cuentas (SIN DELETE CASCADE)
             modelBuilder.Entity<Cuenta>()
                 .HasOne(c => c.Usuario)
