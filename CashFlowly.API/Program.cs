@@ -20,6 +20,8 @@ builder.Services.AddDbContext<CashFlowlyDbContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IGastosRepository, GastosRepository>();
+builder.Services.AddScoped<IGastoService, IGastoService>();
 
 
 // Configuración de JWT
