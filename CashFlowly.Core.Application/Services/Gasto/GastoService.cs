@@ -7,6 +7,7 @@ using CashFlowly.Core.Domain.Entities;
 using CashFlowly.Core.Application.Interfaces.Services;
 using CashFlowly.Core.Application.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
+using CashFlowly.Core.Application.Interfaces.Repositories.CashFlowly.Core.Application.Interfaces.Repositories;
 
 namespace CashFlowly.Core.Application.Services.Gasto
 {
@@ -14,11 +15,13 @@ namespace CashFlowly.Core.Application.Services.Gasto
     {
         private readonly IGastosRepository _gastosRepository;
         private readonly ILogger<GastoService> _logger;
+        private readonly ICuentasRepository _cuentasRepository;
 
-        public GastoService(IGastosRepository gastosRepository, ILogger<GastoService> logger)
+        public GastoService(IGastosRepository gastosRepository, ILogger<GastoService> logger, ICuentasRepository cuentasRepository)
         {
             _gastosRepository = gastosRepository;
             _logger = logger;
+            _cuentasRepository = cuentasRepository;
         }
 
         public async Task RegistrarGastoAsync(RegistrarGastoDto gastoDto, int usuarioId)
@@ -29,6 +32,12 @@ namespace CashFlowly.Core.Application.Services.Gasto
                 if (!gastoDto.CategoriaGastoId.HasValue && !gastoDto.CategoriaGastoPersonalizadoId.HasValue)
                 {
                     throw new Exception("Debe seleccionar al menos una categoría.");
+                }
+
+                var cuenta = await _cuentasRepository.GetByIdAsync(gastoDto.CuentaId);
+                if (cuenta == null || cuenta.UsuarioId != usuarioId)
+                {
+                    throw new Exception("Cuenta no válida para el usuario.");
                 }
 
                 // Si alguna categoría es 0, asignarla como null
@@ -45,7 +54,11 @@ namespace CashFlowly.Core.Application.Services.Gasto
                     CategoriaPersonalizadaId = categoriaIdP  // Asignar null si es 0
                 };
 
+                // restar el saldo a la cuenta
+                cuenta.SaldoDisponible -= gasto.Monto;
+
                 await _gastosRepository.RegistrarGastoAsync(gasto);
+                await _cuentasRepository.UpdateAsync(cuenta, cuenta.Id);
             }
             catch (Exception ex)
             {
@@ -141,7 +154,16 @@ namespace CashFlowly.Core.Application.Services.Gasto
                     throw new Exception("No tienes permiso para eliminar este gasto.");
                 }
 
+                var cuenta = await _cuentasRepository.GetByIdAsync(gasto.CuentaId);
+                if (cuenta == null || cuenta.UsuarioId != usuarioId)
+                {
+                    throw new Exception("Cuenta no válida para el usuario.");
+                }
+                // Restar el monto del ingreso eliminado al saldo de la cuenta
+                cuenta.SaldoDisponible += gasto.Monto;
+
                 await _gastosRepository.EliminarGastoAsync(gastoId);
+                await _cuentasRepository.UpdateAsync(cuenta, cuenta.Id);
             }
             catch (Exception ex)
             {
