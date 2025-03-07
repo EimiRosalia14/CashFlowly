@@ -117,6 +117,18 @@ namespace CashFlowly.Core.Application.Services.Gasto
                     throw new Exception("No tienes permiso para editar este gasto.");
                 }
 
+                var cuenta = await _cuentasRepository.GetByIdAsync(gasto.CuentaId);
+                if (cuenta == null)
+                {
+                    throw new Exception("Cuenta no encontrada.");
+                }
+
+                // Calcular la diferencia del monto
+                decimal diferenciaMonto = gastoDto.Monto - gasto.Monto;
+
+                // Ajustar el saldo de la cuenta
+                cuenta.SaldoDisponible -= diferenciaMonto;
+
                 // Si alguna categoría es 0, asignarla como null
                 var categoriaId = gastoDto.CategoriaGastoId == 0 ? (int?)null : gastoDto.CategoriaGastoId;
                 var categoriaIdP = gastoDto.CategoriaGastoPersonalizadoId == 0 ? (int?)null : gastoDto.CategoriaGastoPersonalizadoId;
@@ -130,6 +142,8 @@ namespace CashFlowly.Core.Application.Services.Gasto
                 gasto.CategoriaPersonalizadaId = categoriaIdP;
 
                 await _gastosRepository.EditarGastoAsync(gasto);
+                await _cuentasRepository.UpdateAsync(cuenta, cuenta.Id); //Guardar cambios en la cuenta
+
             }
             catch (Exception ex)
             {
