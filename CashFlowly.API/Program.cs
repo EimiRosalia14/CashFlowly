@@ -26,6 +26,10 @@ builder.Services.AddDbContext<CashFlowlyDbContext>(options =>
 // Registrar HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
+// AI
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IRecommendationService, RecommendationService>();
+
 // Inyección de Dependencias - Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
