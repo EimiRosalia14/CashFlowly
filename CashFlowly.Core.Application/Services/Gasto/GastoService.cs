@@ -28,7 +28,7 @@ namespace CashFlowly.Core.Application.Services.Gasto
         {
             try
             {
-                // Validación: Debe seleccionar al menos una categoría
+                // Validación: Debe seleccionar al menos una categoría 
                 if (!gastoDto.CategoriaGastoId.HasValue && !gastoDto.CategoriaGastoPersonalizadoId.HasValue)
                 {
                     throw new Exception("Debe seleccionar al menos una categoría.");
@@ -143,7 +143,7 @@ namespace CashFlowly.Core.Application.Services.Gasto
 
                 await _gastosRepository.EditarGastoAsync(gasto);
                 await _cuentasRepository.UpdateAsync(cuenta, cuenta.Id); //Guardar cambios en la cuenta
-
+                
             }
             catch (Exception ex)
             {
