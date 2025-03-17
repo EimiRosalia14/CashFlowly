@@ -47,7 +47,7 @@ namespace CashFlowly.Core.Application.Services
 
                 var requestData = new
                 {
-                    model = "gpt-4",
+                    model = "gpt-4o",
                     messages = new[] { new { role = "user", content = prompt } }
                 };
 
