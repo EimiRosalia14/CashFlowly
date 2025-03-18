@@ -47,7 +47,7 @@ namespace CashFlowly.Core.Application.Services
 
                 var requestData = new
                 {
-                    model = "gpt-4o",
+                    model = "gpt-4o-mini",
                     messages = new[] { new { role = "user", content = prompt } }
                 };
 
@@ -60,33 +60,41 @@ namespace CashFlowly.Core.Application.Services
                 _logger.LogInformation("Enviando petición a la API de OpenAI.");
                 var response = await httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
 
-                _logger.LogInformation($"Respuesta de OpenAI: {response.StatusCode}");
                 var responseString = await response.Content.ReadAsStringAsync();
+
+                _logger.LogInformation($"Respuesta de OpenAI: {response.StatusCode}");
                 _logger.LogDebug($"Cuerpo de respuesta de OpenAI: {responseString}");
 
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogError($"Error en la API de OpenAI: {response.StatusCode} - {responseString}");
-                    return "Error al obtener recomendaciones.";
+                    return $"Error al obtener recomendaciones. Código de estado: {response.StatusCode}. Respuesta: {responseString}";
                 }
 
                 try
                 {
                     var responseObject = JsonSerializer.Deserialize<OpenAIResponse>(responseString);
                     var recommendation = responseObject?.choices?.FirstOrDefault()?.message?.content;
+
+                    if (recommendation == null)
+                    {
+                        _logger.LogWarning("No se encontraron recomendaciones en la respuesta de OpenAI.");
+                        return "No se encontraron recomendaciones en la respuesta.";
+                    }
+
                     _logger.LogInformation("Recomendaciones obtenidas de OpenAI.");
                     return recommendation;
                 }
                 catch (JsonException ex)
                 {
                     _logger.LogError(ex, $"Error al deserializar la respuesta de OpenAI: {responseString}");
-                    return "Error al procesar las recomendaciones.";
+                    return $"Error al procesar las recomendaciones. Respuesta: {responseString}";
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al obtener recomendaciones de OpenAI.");
-                return "Ocurrió un error al obtener las recomendaciones.";
+                return $"Ocurrió un error al obtener las recomendaciones: {ex.Message}";
             }
         }
 
