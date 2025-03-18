@@ -9,12 +9,17 @@ using System.Text;
 using CashFlowly.Infrastructure.Persistence.Repositories;
 using CashFlowly.Infrastructure.Persistence.Contexts;
 using CashFlowly.Core.Application.Services;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connection = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
+                ? builder.Configuration.GetConnectionString("DefaultConnection") 
+                : Environment.GetEnvironmentVariable("PRODUCTION_DB_CONNECTION");
+
 // Configuración de la base de datos
 builder.Services.AddDbContext<CashFlowlyDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connection));
 
 // Inyección de dependencias (Repositorios y Servicios)
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
