@@ -23,11 +23,14 @@ namespace CashFlowly.Core.Domain.Entities
         public string? TokenVerificacion { get; set; }
 
         // Nuevo: Saldo Disponible para gastar
-        public decimal SaldoDisponible { get; set; } = 0;
+        //public decimal SaldoDisponible { get; set; } = 0;
 
         // Relaciones
-        public ICollection<Transaccion> Transacciones { get; set; }
-        public ICollection<MetaFinanciera> MetasFinancieras { get; set; }
-        public ICollection<Alerta> Alertas { get; set; }
+        public ICollection<Cuenta> Cuentas { get; set; } = new List<Cuenta>();
+        public ICollection<Ingreso> Ingresos { get; set; } = new List<Ingreso>();
+        public ICollection<Gasto> Gastos { get; set; } = new List<Gasto>();
+        public ICollection<MetaFinanciera> Metas { get; set; } = new List<MetaFinanciera>();
+        public ICollection<CategoriaIngresoPersonalizada> CategoriasIngresosPersonalizadas { get; set; } = new List<CategoriaIngresoPersonalizada>();
+        public ICollection<CategoriaGastoPersonalizada> CategoriasGastosPersonalizadas { get; set; } = new List<CategoriaGastoPersonalizada>();
     }
 }

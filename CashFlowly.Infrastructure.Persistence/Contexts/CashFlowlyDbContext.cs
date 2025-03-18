@@ -14,54 +14,90 @@ namespace CashFlowly.Infrastructure.Persistence.Contexts
         public CashFlowlyDbContext(DbContextOptions<CashFlowlyDbContext> options) : base(options) { }
 
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Transaccion> Transacciones { get; set; }
-        public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Cuenta> Cuentas { get; set; }
+        public DbSet<Ingreso> Ingresos { get; set; }
+        public DbSet<Gasto> Gastos { get; set; }
+        public DbSet<CategoriaIngreso> CategoriasIngresos { get; set; }
+        public DbSet<CategoriaGasto> CategoriasGastos { get; set; }
+        public DbSet<CategoriaIngresoPersonalizada> CategoriasIngresosPersonalizadas { get; set; }
+        public DbSet<CategoriaGastoPersonalizada> CategoriasGastosPersonalizadas { get; set; }
         public DbSet<MetaFinanciera> MetasFinancieras { get; set; }
-        public DbSet<Alerta> Alertas { get; set; }
-        public DbSet<MensajeChatbot> MensajesChatbot { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Restringir el correo a único en la BD
-            modelBuilder.Entity<Usuario>().HasIndex(u => u.Email).IsUnique();
-
-            // Relaciones entre entidades
+            // Índice único para Email
             modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.Transacciones)
-                .WithOne(t => t.Usuario)
-                .HasForeignKey(t => t.UsuarioId);
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
-            modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.MetasFinancieras)
-                .WithOne(m => m.Usuario)
-                .HasForeignKey(m => m.UsuarioId);
+            // Relación Usuario -> Gastos (SIN DELETE CASCADE)
+            modelBuilder.Entity<Gasto>()
+                .HasOne(g => g.Usuario)
+                .WithMany(u => u.Gastos)
+                .HasForeignKey(g => g.UsuarioId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
 
-            modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.Alertas)
-                .WithOne(a => a.Usuario)
-                .HasForeignKey(a => a.UsuarioId);
+            // Relación Usuario -> Ingresos (SIN DELETE CASCADE)
+            modelBuilder.Entity<Ingreso>()
+                .HasOne(i => i.Usuario)
+                .WithMany(u => u.Ingresos)
+                .HasForeignKey(i => i.UsuarioId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
 
-            modelBuilder.Entity<Transaccion>()
-                .HasOne(t => t.Categoria)
-                .WithMany(c => c.Transacciones)
-                .HasForeignKey(t => t.CategoriaId);
+            modelBuilder.Entity<Ingreso>()
+                .HasOne(i => i.CategoriaPersonalizada)
+                .WithMany()
+                .HasForeignKey(i => i.CategoriaPersonalizadaId)
+                .OnDelete(DeleteBehavior.SetNull); // Permitir NULL si se elimina la categoría personalizada
 
-            // Configuración de precisión para evitar truncamientos en SQL Server
-            modelBuilder.Entity<Usuario>()
-                .Property(u => u.SaldoDisponible)
+            // Relación Usuario -> Cuentas (SIN DELETE CASCADE)
+            modelBuilder.Entity<Cuenta>()
+                .HasOne(c => c.Usuario)
+                .WithMany(u => u.Cuentas)
+                .HasForeignKey(c => c.UsuarioId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
+
+            // Relación Usuario -> Metas (SIN DELETE CASCADE)
+            modelBuilder.Entity<MetaFinanciera>()
+                .HasOne(m => m.Usuario)
+                .WithMany(u => u.Metas)
+                .HasForeignKey(m => m.UsuarioId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambia CASCADE a NO ACTION
+
+            // Configuración de precisión en campos decimales para evitar truncamientos
+            modelBuilder.Entity<Cuenta>()
+                .Property(c => c.SaldoDisponible)
                 .HasPrecision(18, 2);
 
-            modelBuilder.Entity<Transaccion>()
-                .Property(t => t.Monto)
+            modelBuilder.Entity<Gasto>()
+                .Property(g => g.Monto)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Ingreso>()
+                .Property(i => i.Monto)
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<MetaFinanciera>()
-                .Property(m => m.MontoObjetivo)
+                .Property(m => m.Objetivo)
                 .HasPrecision(18, 2);
 
-            modelBuilder.Entity<MetaFinanciera>()
-                .Property(m => m.MontoAhorrado)
-                .HasPrecision(18, 2);
+            // Agregar Categorías Fijas de Ingresos
+            modelBuilder.Entity<CategoriaIngreso>().HasData(
+                new CategoriaIngreso { Id = 1, Nombre = "Salario" },
+                new CategoriaIngreso { Id = 2, Nombre = "Deudas cobradas" },
+                new CategoriaIngreso { Id = 3, Nombre = "Regalos / Donaciones" },
+                new CategoriaIngreso { Id = 4, Nombre = "Ventas personales" },
+                new CategoriaIngreso { Id = 5, Nombre = "Inversiones" }
+            );
+
+            // Agregar Categorías Fijas de Gastos
+            modelBuilder.Entity<CategoriaGasto>().HasData(
+                new CategoriaGasto { Id = 1, Nombre = "Vivienda" },
+                new CategoriaGasto { Id = 2, Nombre = "Alimentación" },
+                new CategoriaGasto { Id = 3, Nombre = "Transporte" },
+                new CategoriaGasto { Id = 4, Nombre = "Salud" },
+                new CategoriaGasto { Id = 5, Nombre = "Entretenimiento" }
+            );
         }
     }
 }
