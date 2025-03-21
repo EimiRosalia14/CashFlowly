@@ -1,4 +1,5 @@
-﻿using CashFlowly.Core.Domain.Entities;
+﻿using CashFlowly.Core.Application.Interfaces.Repositories;
+using CashFlowly.Core.Domain.Entities;
 using CashFlowly.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,35 +10,20 @@ using System.Threading.Tasks;
 
 namespace CashFlowly.Infrastructure.Persistence.Repositories
 {
-    public class CategoriaRepository
+    public class CategoriaRepository<T> : ICategoriaRepository<T> where T : class
     {
         private readonly CashFlowlyDbContext _context;
+        private readonly DbSet<T> _dbSet;
 
         public CategoriaRepository(CashFlowlyDbContext context)
         {
             _context = context;
+            _dbSet = context.Set<T>();
         }
 
-        public async Task<IEnumerable<Categoria>> ObtenerTodasAsync()
+        public async Task<IEnumerable<T>> ObtenerTodasAsync()
         {
-            return await _context.Categorias.ToListAsync();
-        }
-
-        public async Task<Categoria> AgregarAsync(Categoria categoria)
-        {
-            _context.Categorias.Add(categoria);
-            await _context.SaveChangesAsync();
-            return categoria;
-        }
-
-        public async Task<bool> EliminarAsync(int id)
-        {
-            var categoria = await _context.Categorias.FindAsync(id);
-            if (categoria == null) return false;
-
-            _context.Categorias.Remove(categoria);
-            await _context.SaveChangesAsync();
-            return true;
+            return await _dbSet.ToListAsync();
         }
     }
 }

@@ -4,6 +4,7 @@ using CashFlowly.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CashFlowly.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CashFlowlyDbContext))]
-    partial class CashFlowlyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304162454_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,55 +40,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CategoriasGastos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Vivienda"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Alimentación"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Transporte"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Salud"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Entretenimiento"
-                        });
-                });
-
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaGastoPersonalizada", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("CategoriasGastosPersonalizadas");
                 });
 
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaIngreso", b =>
@@ -103,55 +57,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CategoriasIngresos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Salario"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Deudas cobradas"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Regalos / Donaciones"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Ventas personales"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Inversiones"
-                        });
-                });
-
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaIngresoPersonalizada", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("CategoriasIngresosPersonalizadas");
                 });
 
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Cuenta", b =>
@@ -192,10 +97,7 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoriaId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CategoriaPersonalizadaId")
+                    b.Property<int>("CategoriaId")
                         .HasColumnType("int");
 
                     b.Property<int>("CuentaId")
@@ -215,8 +117,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CategoriaId");
 
-                    b.HasIndex("CategoriaPersonalizadaId");
-
                     b.HasIndex("CuentaId");
 
                     b.HasIndex("UsuarioId");
@@ -232,10 +132,7 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoriaId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CategoriaPersonalizadaId")
+                    b.Property<int>("CategoriaId")
                         .HasColumnType("int");
 
                     b.Property<int>("CuentaId")
@@ -257,8 +154,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoriaId");
-
-                    b.HasIndex("CategoriaPersonalizadaId");
 
                     b.HasIndex("CuentaId");
 
@@ -342,34 +237,12 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaGastoPersonalizada", b =>
-                {
-                    b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("CategoriasGastosPersonalizadas")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaIngresoPersonalizada", b =>
-                {
-                    b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("CategoriasIngresosPersonalizadas")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Cuenta", b =>
                 {
                     b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Cuentas")
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Usuario");
@@ -379,27 +252,23 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("CashFlowly.Core.Domain.Entities.CategoriaGasto", "Categoria")
                         .WithMany("Gastos")
-                        .HasForeignKey("CategoriaId");
-
-                    b.HasOne("CashFlowly.Core.Domain.Entities.CategoriaGastoPersonalizada", "CategoriaPersonalizada")
-                        .WithMany("Gastos")
-                        .HasForeignKey("CategoriaPersonalizadaId");
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CashFlowly.Core.Domain.Entities.Cuenta", "Cuenta")
                         .WithMany("Gastos")
                         .HasForeignKey("CuentaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Gastos")
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Categoria");
-
-                    b.Navigation("CategoriaPersonalizada");
 
                     b.Navigation("Cuenta");
 
@@ -410,28 +279,23 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("CashFlowly.Core.Domain.Entities.CategoriaIngreso", "Categoria")
                         .WithMany("Ingresos")
-                        .HasForeignKey("CategoriaId");
-
-                    b.HasOne("CashFlowly.Core.Domain.Entities.CategoriaIngresoPersonalizada", "CategoriaPersonalizada")
-                        .WithMany()
-                        .HasForeignKey("CategoriaPersonalizadaId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CashFlowly.Core.Domain.Entities.Cuenta", "Cuenta")
                         .WithMany("Ingresos")
                         .HasForeignKey("CuentaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Ingresos")
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Categoria");
-
-                    b.Navigation("CategoriaPersonalizada");
 
                     b.Navigation("Cuenta");
 
@@ -443,18 +307,13 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
                     b.HasOne("CashFlowly.Core.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Metas")
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaGasto", b =>
-                {
-                    b.Navigation("Gastos");
-                });
-
-            modelBuilder.Entity("CashFlowly.Core.Domain.Entities.CategoriaGastoPersonalizada", b =>
                 {
                     b.Navigation("Gastos");
                 });
@@ -473,10 +332,6 @@ namespace CashFlowly.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("CashFlowly.Core.Domain.Entities.Usuario", b =>
                 {
-                    b.Navigation("CategoriasGastosPersonalizadas");
-
-                    b.Navigation("CategoriasIngresosPersonalizadas");
-
                     b.Navigation("Cuentas");
 
                     b.Navigation("Gastos");
