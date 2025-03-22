@@ -26,6 +26,13 @@ builder.Services.AddDbContext<CashFlowlyDbContext>(options =>
 // Registrar HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
+// AI
+builder.Services.AddHttpClient("OpenAIClient", client =>
+{
+    client.BaseAddress = new Uri("https://api.openai.com/v1/");
+});
+builder.Services.AddScoped<IRecommendationService, RecommendationService>();
+
 // Inyección de Dependencias - Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -33,7 +40,7 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IGastoService, GastoService>();
 builder.Services.AddScoped<ICuentasService, CuentasService>();
 builder.Services.AddScoped<IIngresosService, IngresosService>();
-builder.Services.AddScoped<ICategoriaService, CategoriaService>();  
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
 // Inyección de Dependencias - Repositorios
 builder.Services.AddScoped<IGastosRepository, GastosRepository>();

@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using CashFlowly.Core.Application.DTOs.Gastos;
 using CashFlowly.Core.Application.Interfaces.Services;
+using CashFlowly.Core.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,13 @@ namespace CashFlowly.API.Controllers
     {
         private readonly IGastoService _gastoService;
         private readonly ILogger<GastoController> _logger;
+        private readonly IRecommendationService _recommendationService;
 
-        public GastoController(IGastoService gastoService, ILogger<GastoController> logger)
+        public GastoController(IGastoService gastoService, ILogger<GastoController> logger, IRecommendationService recommendationService)
         {
             _gastoService = gastoService;
             _logger = logger;
+            _recommendationService = recommendationService;
         }
         // Obtener el UsuarioId desde el token JWT
         private int GetUsuarioId()
@@ -82,5 +85,15 @@ namespace CashFlowly.API.Controllers
             await _gastoService.EliminarGastoAsync(gastoId, usuarioId);
             return Ok(new { message = "Gasto eliminado correctamente." });
         }
+
+        // 5. Obtener recomendaciones AI
+        [HttpGet("recomendaciones")]
+        public async Task<IActionResult> ObtenerRecomendaciones()
+        {
+            int usuarioId = GetUsuarioId();
+            var recomendaciones = await _recommendationService.GetRecommendationsAsync(usuarioId);
+            return Ok(new { recomendaciones });
+        }
+
     }
 }
