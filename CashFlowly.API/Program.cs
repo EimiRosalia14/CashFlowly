@@ -29,16 +29,23 @@ builder.Services.AddDbContext<CashFlowlyDbContext>(options =>
 // Registrar HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
-// Inyección de Dependencias - Servicios
+
+// AI
+builder.Services.AddHttpClient("OpenAIClient", client =>
+{
+    client.BaseAddress = new Uri("https://api.openai.com/v1/");
+});
+
+builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IGastoService, GastoService>();
 builder.Services.AddScoped<ICuentasService, CuentasService>();
 builder.Services.AddScoped<IIngresosService, IngresosService>();
-builder.Services.AddScoped<ICategoriaService, CategoriaService>();  
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
-// Inyección de Dependencias - Repositorios
+// InyecciÃ³n de Dependencias - Repositorios
 builder.Services.AddScoped<IGastosRepository, GastosRepository>();
 builder.Services.AddScoped<ICuentasRepository, CuentasRepository>();
 builder.Services.AddScoped<IIngresosRepository, IngresosRepository>();
@@ -47,10 +54,10 @@ builder.Services.AddScoped<ICategoriaRepository<CategoriaGasto>, CategoriaReposi
 builder.Services.AddScoped<ICategoriaIngresoPersonalizadaRepository, CategoriaIngresoPersonalizadaRepository>();
 builder.Services.AddScoped<ICategoriaGastoPersonalizadaRepository, CategoriaGastoPersonalizadaRepository>();
 
-// Inyección de AutoMapper
+// InyecciÃ³n de AutoMapper
 builder.Services.AddAutoMapper(typeof(DefaultProfile));
 
-// Configuración de Autenticación y Autorización
+// ConfiguraciÃ³n de AutenticaciÃ³n y AutorizaciÃ³n
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -80,7 +87,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-// Configuración de Swagger con Autenticación JWT
+// ConfiguraciÃ³n de Swagger con AutenticaciÃ³n JWT
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "CashFlowly.API", Version = "v1" });
