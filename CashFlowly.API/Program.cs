@@ -19,21 +19,24 @@ using CashFlowly.Core.Application.Interfaces.Repositories.CashFlowly.Core.Applic
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de la Base de Datos
+var connection = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
+                ? builder.Configuration.GetConnectionString("DefaultConnection") 
+                : Environment.GetEnvironmentVariable("PRODUCTION_DB_CONNECTION");
+
 builder.Services.AddDbContext<CashFlowlyDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connection));
 
 // Registrar HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
+
 
 // AI
 builder.Services.AddHttpClient("OpenAIClient", client =>
 {
     client.BaseAddress = new Uri("https://api.openai.com/v1/");
 });
-builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 
-// Inyección de Dependencias - Servicios
+builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
@@ -42,7 +45,7 @@ builder.Services.AddScoped<ICuentasService, CuentasService>();
 builder.Services.AddScoped<IIngresosService, IngresosService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
-// Inyección de Dependencias - Repositorios
+// InyecciÃƒÂ³n de Dependencias - Repositorios
 builder.Services.AddScoped<IGastosRepository, GastosRepository>();
 builder.Services.AddScoped<ICuentasRepository, CuentasRepository>();
 builder.Services.AddScoped<IIngresosRepository, IngresosRepository>();
@@ -51,10 +54,10 @@ builder.Services.AddScoped<ICategoriaRepository<CategoriaGasto>, CategoriaReposi
 builder.Services.AddScoped<ICategoriaIngresoPersonalizadaRepository, CategoriaIngresoPersonalizadaRepository>();
 builder.Services.AddScoped<ICategoriaGastoPersonalizadaRepository, CategoriaGastoPersonalizadaRepository>();
 
-// Inyección de AutoMapper
+// InyecciÃƒÂ³n de AutoMapper
 builder.Services.AddAutoMapper(typeof(DefaultProfile));
 
-// Configuración de Autenticación y Autorización
+// ConfiguraciÃƒÂ³n de AutenticaciÃƒÂ³n y AutorizaciÃƒÂ³n
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -84,7 +87,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-// Configuración de Swagger con Autenticación JWT
+// ConfiguraciÃƒÂ³n de Swagger con AutenticaciÃƒÂ³n JWT
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "CashFlowly.API", Version = "v1" });
