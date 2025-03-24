@@ -17,8 +17,10 @@ namespace CashFlowly.Infrastructure.Persistence.Contexts
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            optionsBuilder.UseSqlServer(connectionString);
+            var connection = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
+                ? configuration.GetConnectionString("DefaultConnection") 
+                : Environment.GetEnvironmentVariable("PRODUCTION_DB_CONNECTION");
+            optionsBuilder.UseSqlServer(connection);
 
             return new CashFlowlyDbContext(optionsBuilder.Options);
         }
