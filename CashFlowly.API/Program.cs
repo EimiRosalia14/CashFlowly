@@ -16,6 +16,7 @@ using CashFlowly.Core.Application.Services.Cuentas;
 using CashFlowly.Core.Application.Services.Ingresos;
 using CashFlowly.Core.Application.Mappings;
 using CashFlowly.Core.Application.Interfaces.Repositories.CashFlowly.Core.Application.Interfaces.Repositories;
+using CashFlowly.Core.Application.Services.Metas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,7 @@ builder.Services.AddScoped<IGastoService, GastoService>();
 builder.Services.AddScoped<ICuentasService, CuentasService>();
 builder.Services.AddScoped<IIngresosService, IngresosService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<IMetaService, MetaService>();
 
 // InyecciÃ³n de Dependencias - Repositorios
 builder.Services.AddScoped<IGastosRepository, GastosRepository>();
@@ -53,6 +55,8 @@ builder.Services.AddScoped<ICategoriaRepository<CategoriaIngreso>, CategoriaRepo
 builder.Services.AddScoped<ICategoriaRepository<CategoriaGasto>, CategoriaRepository<CategoriaGasto>>();
 builder.Services.AddScoped<ICategoriaIngresoPersonalizadaRepository, CategoriaIngresoPersonalizadaRepository>();
 builder.Services.AddScoped<ICategoriaGastoPersonalizadaRepository, CategoriaGastoPersonalizadaRepository>();
+builder.Services.AddScoped<IMetaRepository, MetaRepository>();
+
 
 // InyecciÃ³n de AutoMapper
 builder.Services.AddAutoMapper(typeof(DefaultProfile));
