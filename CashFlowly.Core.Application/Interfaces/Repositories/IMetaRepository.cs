@@ -12,6 +12,7 @@ namespace CashFlowly.Core.Application.Interfaces.Repositories
         Task<List<MetaFinanciera>> GetAllByUserAsync(int usuarioId);
         Task<MetaFinanciera> GetByIdAsync(int id);
         Task AddAsync(MetaFinanciera meta);
+        Task UpdateAsync(MetaFinanciera meta);
         Task DeleteAsync(MetaFinanciera meta);
     }
 }

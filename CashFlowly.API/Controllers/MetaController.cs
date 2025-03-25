@@ -34,6 +34,17 @@ namespace CashFlowly.API.Controllers
             return Ok(metas);
         }
 
+        [HttpPut("editar/{id}")]
+        public async Task<IActionResult> Editar(int id, [FromBody] EditarMetaDto dto)
+        {
+            if (dto.Id != id)
+                return BadRequest("El ID de la URL no coincide con el ID del cuerpo.");
+
+            await _metaService.EditarMetaAsync(dto, GetUsuarioId());
+            return Ok(new { message = "Meta editada correctamente" });
+        }
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {

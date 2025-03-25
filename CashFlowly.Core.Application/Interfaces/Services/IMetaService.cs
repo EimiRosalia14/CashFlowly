@@ -12,5 +12,6 @@ namespace CashFlowly.Core.Application.Interfaces.Services
         Task CrearMetaAsync(RegistrarMetaDto dto, int usuarioId);
         Task<List<MostrarMetaDto>> ObtenerMetasPorUsuarioAsync(int usuarioId);
         Task EliminarMetaAsync(int metaId, int usuarioId);
+        Task EditarMetaAsync(EditarMetaDto dto, int usuarioId);
     }
 }

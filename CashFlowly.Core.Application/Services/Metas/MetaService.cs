@@ -51,6 +51,19 @@ namespace CashFlowly.Core.Application.Services.Metas
             }).ToList();
         }
 
+        public async Task EditarMetaAsync(EditarMetaDto dto, int usuarioId)
+        {
+            var meta = await _metaRepository.GetByIdAsync(dto.Id);
+            if (meta == null || meta.UsuarioId != usuarioId)
+                throw new Exception("Meta no encontrada o no pertenece al usuario.");
+
+            meta.Nombre = dto.Nombre;
+            meta.Objetivo = dto.Objetivo;
+            meta.FechaPropuesta = dto.FechaPropuesta;
+
+            await _metaRepository.UpdateAsync(meta);
+        }
+
         public async Task EliminarMetaAsync(int metaId, int usuarioId)
         {
             var meta = await _metaRepository.GetByIdAsync(metaId);

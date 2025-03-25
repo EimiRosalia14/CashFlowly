@@ -35,6 +35,12 @@ namespace CashFlowly.Infrastructure.Persistence.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdateAsync(MetaFinanciera meta)
+        {
+            _context.MetasFinancieras.Update(meta);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteAsync(MetaFinanciera meta)
         {
             _context.MetasFinancieras.Remove(meta);
