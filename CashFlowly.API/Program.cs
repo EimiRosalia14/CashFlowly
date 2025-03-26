@@ -46,6 +46,7 @@ builder.Services.AddScoped<ICuentasService, CuentasService>();
 builder.Services.AddScoped<IIngresosService, IngresosService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IMetaService, MetaService>();
+builder.Services.AddScoped<IMetasRecommendationService, MetasRecommendationService>();
 
 // InyecciÃ³n de Dependencias - Repositorios
 builder.Services.AddScoped<IGastosRepository, GastosRepository>();
