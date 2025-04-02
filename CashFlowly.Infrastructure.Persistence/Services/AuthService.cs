@@ -66,16 +66,27 @@ namespace CashFlowly.Infrastructure.Persistence.Services
 
                     await _usuarioRepository.AgregarAsync(usuario);
 
-                    // Enviar el correo ANTES de confirmar la transacción
+                    //Nueva forma de obtener la URL Base en Producción y Desarrollo
                     var request = _httpContextAccessor.HttpContext.Request;
-                    var backendUrl = $"{request.Scheme}://{request.Host.Value}";
+                    string backendUrl;
+
+                    if (request.Headers.ContainsKey("X-Forwarded-Host"))
+                    {
+                        //Si está detrás de un proxy o balanceador de carga
+                        backendUrl = $"{request.Scheme}://{request.Headers["X-Forwarded-Host"]}{request.PathBase}";
+                    }
+                    else
+                    {
+                        //Ambiente de desarrollo o pruebas locales
+                        backendUrl = $"{request.Scheme}://{request.Host.Value}";
+                    }
+
                     var urlVerificacion = $"{backendUrl}/api/usuarios/confirmar?token={HttpUtility.UrlEncode(usuario.TokenVerificacion)}";
                     var mensaje = $"Hola {usuario.Nombre},\n\nGracias por registrarte en CashFlowly.\n\nPor favor verifica tu cuenta haciendo clic en el siguiente enlace: {urlVerificacion}\n\nSi no solicitaste esta cuenta, ignora este mensaje.\n\nSaludos,\nEl equipo de CashFlowly.";
+
                     await _emailService.EnviarCorreoAsync(usuario.Email, "Verificación de Cuenta", mensaje);
 
-                    // Ahora sí confirmamos la transacción
                     await transaction.CommitAsync();
-
                     return "Usuario registrado exitosamente. Por favor revise su correo electrónico para activar la cuenta.";
                 }
                 catch (Exception)
