@@ -72,12 +72,14 @@ namespace CashFlowly.Infrastructure.Persistence.Services
 
                     if (request.Headers.ContainsKey("X-Forwarded-Host"))
                     {
-                        //Si está detrás de un proxy o balanceador de carga
-                        backendUrl = $"{request.Scheme}://{request.Headers["X-Forwarded-Host"]}{request.PathBase}";
+                        //Si está detrás de un proxy o balanceador de carga 
+                        var scheme = request.Headers["X-Forwarded-Proto"].ToString() ?? "https"; 
+                        var host = request.Headers["X-Forwarded-Host"].ToString(); // Dominio asignado por el proveedor.
+                        backendUrl = $"{scheme}://{host}";
                     }
                     else
                     {
-                        //Ambiente de desarrollo o pruebas locales
+                        //Ambiente de desarrollo (localhost)
                         backendUrl = $"{request.Scheme}://{request.Host.Value}";
                     }
 

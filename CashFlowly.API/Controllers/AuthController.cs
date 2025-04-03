@@ -67,7 +67,7 @@ namespace CashFlowly.API.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }*/
-
+        /*
         [HttpGet("confirmar")]
         public async Task<IActionResult> ConfirmarCuenta([FromQuery] string token)
         {
@@ -84,6 +84,45 @@ namespace CashFlowly.API.Controllers
             catch (Exception ex)
             {
                 return Redirect("https://localhost:7248/api/usuarios/error");
+            }
+        }*/
+
+        [HttpGet("confirmar")]
+        public async Task<IActionResult> ConfirmarCuenta([FromQuery] string token)
+        {
+            try
+            {
+                bool confirmado = await _authService.ConfirmarCuentaAsync(token);
+
+                var request = HttpContext.Request;
+                string baseUrl;
+
+                if (request.Headers.ContainsKey("X-Forwarded-Host"))
+                {
+                    //Está en producción (usando un proxy o balanceador de carga)
+                    var scheme = request.Headers["X-Forwarded-Proto"].ToString() ?? "https";
+                    var host = request.Headers["X-Forwarded-Host"].ToString();
+                    baseUrl = $"{scheme}://{host}";
+                }
+                else
+                {
+                    //Está en desarrollo (localhost)
+                    baseUrl = $"{request.Scheme}://{request.Host.Value}";
+                }
+
+                if (!confirmado)
+                {
+                    return Redirect($"{baseUrl}/api/usuarios/error");
+                }
+
+                return Redirect($"{baseUrl}/api/usuarios/exito");
+            }
+            catch (Exception ex)
+            {
+                var request = HttpContext.Request;
+                string baseUrl = $"{request.Scheme}://{request.Host.Value}";
+
+                return Redirect($"{baseUrl}/api/usuarios/error");
             }
         }
 
