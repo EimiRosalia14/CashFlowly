@@ -62,8 +62,8 @@ namespace CashFlowly.Core.Application.Services.Gasto
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al registrar gasto");
-                throw new Exception("Ocurrió un error al registrar el gasto.");
+                _logger.LogError($"Error al registrar gasto error: {ex.Message}");
+                throw new Exception($"Ocurrió un error al registrar el gasto: {ex.Message}");
             }
         }
 
@@ -86,8 +86,9 @@ namespace CashFlowly.Core.Application.Services.Gasto
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener gastos del usuario {UsuarioId}", usuarioId);
-                throw new Exception("Ocurrió un error al obtener los gastos.");
+                string message = $"Error al obtener gastos del usuario {usuarioId}: {ex.Message}";
+                _logger.LogError(message);
+                throw new Exception($"Ocurrió un error al obtener los gastos: {ex.Message}");
             }
         }
 
@@ -143,12 +144,12 @@ namespace CashFlowly.Core.Application.Services.Gasto
 
                 await _gastosRepository.EditarGastoAsync(gasto);
                 await _cuentasRepository.UpdateAsync(cuenta, cuenta.Id); //Guardar cambios en la cuenta
-                
+
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al editar gasto {GastoId} del usuario {UsuarioId}", gastoDto.Id, usuarioId);
-                throw new Exception("Ocurrió un error al editar el gasto.");
+                _logger.LogError($"Error al editar gasto {gastoDto.Id} del usuario {usuarioId}");
+                throw new Exception($"Ocurrió un error al editar el gasto: {ex.Message}");
             }
         }
 
@@ -181,7 +182,7 @@ namespace CashFlowly.Core.Application.Services.Gasto
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al eliminar gasto {GastoId} del usuario {UsuarioId}", gastoId, usuarioId);
+                _logger.LogError($"Error al eliminar gasto {gastoId} del usuario {usuarioId}: {ex.Message}");
                 throw new Exception("Ocurrió un error al eliminar el gasto.");
             }
         }
