@@ -37,6 +37,11 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task<Usuario> GetUserByIdAsync(int id)
+        {
+            return await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
         public async Task<string> RegistrarUsuarioAsync(UsuarioRegistroDto usuarioDto)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())

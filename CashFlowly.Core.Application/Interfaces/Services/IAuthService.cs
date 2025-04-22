@@ -1,4 +1,5 @@
 ﻿using CashFlowly.Core.Application.DTOs.Usuario;
+using CashFlowly.Core.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace CashFlowly.Core.Application.Interfaces.Services
 {
     public interface IAuthService
     {
+        Task<Usuario> GetUserByIdAsync(int id);
         Task<string> RegistrarUsuarioAsync(UsuarioRegistroDto usuarioDto);
         Task<string> LoginAsync(LoginDto loginDto);
 

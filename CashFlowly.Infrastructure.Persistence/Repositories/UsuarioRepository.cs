@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CashFlowly.Infrastructure.Persistence.Repositories
 {
@@ -17,6 +18,11 @@ namespace CashFlowly.Infrastructure.Persistence.Repositories
         public UsuarioRepository(CashFlowlyDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<Usuario> GetUserId(int id)
+        {
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<Usuario> ObtenerPorEmailAsync(string email)
