@@ -103,7 +103,7 @@ namespace CashFlowly.Core.Application.Services
         private string GeneratePrompt(List<MostrarMetaDto> metas)
         {
             var promptBuilder = new StringBuilder();
-            promptBuilder.AppendLine("Analiza las siguientes metas financieras y proporciona recomendaciones para lograr completarlas:");
+            promptBuilder.AppendLine("Analiza las siguientes metas financieras y proporciona recomendaciones para lograr completarlas en solo 90 palabras::");
 
             foreach (var meta in metas)
             {

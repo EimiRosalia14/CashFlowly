@@ -101,7 +101,7 @@ namespace CashFlowly.Core.Application.Services
         private string GeneratePrompt(List<MostrarGastos> gastos)
         {
             var promptBuilder = new StringBuilder();
-            promptBuilder.AppendLine("Analiza los siguientes gastos y proporciona recomendaciones para mejorar la gestión financiera:");
+            promptBuilder.AppendLine("Analiza los siguientes gastos y proporciona recomendaciones para mejorar la gestión financiera en solo 90 palabras:");
 
             decimal totalGastado = 0;
             foreach (var gasto in gastos)
