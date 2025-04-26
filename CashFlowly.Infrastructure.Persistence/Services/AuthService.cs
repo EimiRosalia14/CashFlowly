@@ -127,7 +127,7 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             }
         }
 
-
+        
         public async Task<string> LoginAsync(LoginDto loginDto)
         {
             var usuario = await _usuarioRepository.ObtenerPorEmailAsync(loginDto.Email);
@@ -168,7 +168,7 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             // Llamar al método para crear la cookie
             await CrearCookieAsync(usuario, loginDto.RecordarSesion);
 
-            return token;
+            return $"{token};{usuario.Id}";
         }
 
         private async Task CrearCookieAsync(Usuario usuario, bool recordarSesion)
