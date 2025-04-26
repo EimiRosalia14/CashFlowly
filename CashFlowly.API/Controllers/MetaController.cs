@@ -1,5 +1,6 @@
 ﻿using CashFlowly.Core.Application.DTOs.Metas;
 using CashFlowly.Core.Application.Interfaces.Services;
+using CashFlowly.Core.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,15 @@ namespace CashFlowly.API.Controllers
     public class MetaController : ControllerBase
     {
         private readonly IMetaService _metaService;
+        private readonly ILogger<MetaController> _logger;
+        private readonly IMetasRecommendationService _metasrecommendationService;
 
-        public MetaController(IMetaService metaService)
+        public MetaController(IMetaService metaService, ILogger<MetaController> logger, IMetasRecommendationService metasrecommendation)
         {
             _metaService = metaService;
+            _logger = logger;
+            _metasrecommendationService = metasrecommendation;
+
         }
 
         private int GetUsuarioId() =>
@@ -50,6 +56,14 @@ namespace CashFlowly.API.Controllers
         {
             await _metaService.EliminarMetaAsync(id, GetUsuarioId());
             return Ok(new { message = "Meta eliminada correctamente" });
+        }
+
+        [HttpGet("recomendaciones")]
+        public async Task<IActionResult> ObtenerRecomendaciones()
+        {
+            int usuarioId = GetUsuarioId();
+            var recomendaciones = await _metasrecommendationService.GetGoalsRecommendationsAsync(usuarioId);
+            return Ok(new { recomendaciones });
         }
     }
 }
