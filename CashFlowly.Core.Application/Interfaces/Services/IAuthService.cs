@@ -11,6 +11,7 @@ namespace CashFlowly.Core.Application.Interfaces.Services
     public interface IAuthService
     {
         Task<Usuario> GetUserByIdAsync(int id);
+        Task<Usuario> GetUsuarioByEmailAsync(string email);
         Task<string> RegistrarUsuarioAsync(UsuarioRegistroDto usuarioDto);
         Task<string> LoginAsync(LoginDto loginDto);
 

@@ -142,5 +142,41 @@ namespace CashFlowly.API.Controllers
                            "<h1 style='color:red;'>Error al confirmar cuenta</h1>" +
                            "<p>El token es invalido o la cuenta ya fue confirmada.</p></body></html>", "text/html");
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUsuarioById(int id)
+        {
+            try
+            {
+                var usuario = await _authService.GetUserByIdAsync(id);
+                if (usuario == null)
+                {
+                    return NotFound(new { mensaje = "Usuario no encontrado" });
+                }
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("email/{email}")]
+        public async Task<IActionResult> GetUsuarioByEmail(string email)
+        {
+            try
+            {
+                var usuario = await _authService.GetUsuarioByEmailAsync(email);
+                if (usuario == null)
+                {
+                    return NotFound(new { mensaje = "Usuario no encontrado" });
+                }
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
     }
 }

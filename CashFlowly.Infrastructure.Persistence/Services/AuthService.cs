@@ -42,6 +42,13 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             return await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
+
+        public async Task<Usuario> GetUsuarioByEmailAsync(string email)
+        {
+            return await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         public async Task<string> RegistrarUsuarioAsync(UsuarioRegistroDto usuarioDto)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -78,7 +85,7 @@ namespace CashFlowly.Infrastructure.Persistence.Services
                     if (request.Headers.ContainsKey("X-Forwarded-Host"))
                     {
                         //Si está detrás de un proxy o balanceador de carga 
-                        var scheme = request.Headers["X-Forwarded-Proto"].ToString() ?? "https"; 
+                        var scheme = request.Headers["X-Forwarded-Proto"].ToString() ?? "https";
                         var host = request.Headers["X-Forwarded-Host"].ToString(); // Dominio asignado por el proveedor.
                         backendUrl = $"{scheme}://{host}";
                     }
@@ -94,7 +101,7 @@ namespace CashFlowly.Infrastructure.Persistence.Services
                     await _emailService.EnviarCorreoAsync(usuario.Email, "Verificación de Cuenta", mensaje);
 
                     await transaction.CommitAsync();
-                    return "Usuario registrado exitosamente. Por favor revise su correo electrónico para activar la cuenta.";
+                    return $"Usuario registrado exitosamente. Por favor revise su correo electrónico para activar la cuenta.";
                 }
                 catch (Exception)
                 {
@@ -127,7 +134,7 @@ namespace CashFlowly.Infrastructure.Persistence.Services
             }
         }
 
-        
+
         public async Task<string> LoginAsync(LoginDto loginDto)
         {
             var usuario = await _usuarioRepository.ObtenerPorEmailAsync(loginDto.Email);
